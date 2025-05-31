@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 主色调（用于 Toolbar、Button 等）-->
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryVariant">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <!-- 导航栏选中 / 未选中时的文字与图标颜色切换 -->
+    <!-- 选中时使用 colorPrimary，不选中时使用灰色 #888888 -->
+    <!-- 下面的 selector_nav_item_color.xml 也会引用到这两个颜色 -->
+    <color name="nav_item_checked">#3F51B5</color>
+    <color name="nav_item_unchecked">#888888</color>
+
+    <!-- 白色、灰色、浅灰，用于各类背景或占位 -->
+    <color name="white">#FFFFFF</color>
+    <color name="light_gray">#F0F0F0</color>
+    <color name="medium_gray">#DDDDDD</color>
+    <color name="dark_gray">#777777</color>
+</resources>

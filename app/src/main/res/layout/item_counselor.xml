@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardCounselor"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp"
+    app:cardUseCompatPadding="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <!-- 咨询师头像 -->
+        <ImageView
+            android:id="@+id/imgCounselorAvatar"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginEnd="12dp"
+            android:contentDescription="咨询师头像"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_default_avatar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@drawable/circle_background" />
+
+        <!-- 咨询师姓名 -->
+        <TextView
+            android:id="@+id/tvCounselorName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="张三"
+            android:textColor="#222222"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/imgCounselorAvatar"
+            app:layout_constraintTop_toTopOf="@id/imgCounselorAvatar"
+            app:layout_constraintEnd_toStartOf="@id/btnBook"
+            android:ellipsize="end"
+            android:maxLines="1"/>
+
+        <!-- 咨询师简介 / 擅长领域 -->
+        <TextView
+            android:id="@+id/tvCounselorInfo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="心理咨询师，擅长焦虑、抑郁等问题"
+            android:textColor="#555555"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/tvCounselorName"
+            app:layout_constraintTop_toBottomOf="@id/tvCounselorName"
+            app:layout_constraintEnd_toStartOf="@id/btnBook"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:layout_marginTop="4dp" />
+
+        <!-- 可预约时间 -->
+        <TextView
+            android:id="@+id/tvCounselorTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="可预约时间：周一 14:00 - 17:00"
+            android:textColor="#777777"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@id/tvCounselorInfo"
+            app:layout_constraintTop_toBottomOf="@id/tvCounselorInfo"
+            app:layout_constraintEnd_toStartOf="@id/btnBook"
+            android:layout_marginTop="4dp" />
+
+        <!-- “预约”按钮 -->
+        <Button
+            android:id="@+id/btnBook"
+            android:layout_width="80dp"
+            android:layout_height="36dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:text="预约"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
