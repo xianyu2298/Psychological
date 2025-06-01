@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.Nullable;
 
+import com.aaa.psychological.models.Appointment;
 import com.aaa.psychological.models.Counselor;
 
 import java.util.ArrayList;
@@ -32,6 +33,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String COLUMN_AVATAR = "avatar";
 
+    private static final String TABLE_APPOINTMENTS = "appointments";
+
+
 
     // 建表语句
     private static final String CREATE_TABLE_USERS =
@@ -43,6 +47,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     + COLUMN_AVATAR + " BLOB"
                     + ");";
 
+    private static final String CREATE_TABLE_APPOINTMENTS =
+            "CREATE TABLE " + TABLE_APPOINTMENTS + " (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "user_name TEXT NOT NULL, " +
+                    "counselor_name TEXT NOT NULL, " +
+                    "status TEXT NOT NULL DEFAULT '已预约', " +
+                    "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, " +
+                    "avatar BLOB" +
+                    ");";
+
+
     public DatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -51,12 +66,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         // 创建用户表
         db.execSQL(CREATE_TABLE_USERS);
+        db.execSQL(CREATE_TABLE_APPOINTMENTS);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // 如果需要升级，先删除旧表，然后创建新表
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_APPOINTMENTS);
         onCreate(db);
     }
 
@@ -148,4 +165,92 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return list;
     }
 
+    /**
+     * 预约方法
+     */
+    public boolean insertAppointment(String userName, String counselorName, byte[] avatar) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("user_name", userName);
+        values.put("counselor_name", counselorName);
+        values.put("status", "已预约");
+        values.put("avatar", avatar);
+        long result = db.insert(TABLE_APPOINTMENTS, null, values);
+        db.close();
+        return result != -1;
+    }
+
+
+    /**
+     * 查询用户的预约记录
+     */
+    public boolean hasUserAlreadyBooked(String username, String counselorName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query("appointments",
+                new String[]{"id"},
+                "user_name = ? AND counselor_name = ?",
+                new String[]{username, counselorName},
+                null, null, null);
+        boolean exists = (cursor != null && cursor.moveToFirst());
+        if (cursor != null) cursor.close();
+        return exists;
+    }
+
+    /*
+     * 查询用户的预约记录
+     * @param username 用户名
+     * @return List<String>：每个元素是一条预约记录的字符串表示
+     */
+    public List<String> getAppointmentsByUser(String username) {
+        List<String> records = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query("appointments",
+                new String[]{"counselor_name", "status", "timestamp"},
+                "user_name = ?",
+                new String[]{username},
+                null, null, "timestamp DESC");
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                String name = cursor.getString(0);
+                String status = cursor.getString(1);
+                String time = cursor.getString(2);
+                records.add("咨询师：" + name + "\n状态：" + status + "\n时间：" + time);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+
+        return records;
+    }
+
+    /**
+     * 查询预约记录并返回结构化对象列表（包含头像）
+     */
+    public List<Appointment> getAppointmentsDetailedByUser(String username) {
+        List<Appointment> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT a.counselor_name, a.status, a.timestamp, u.avatar " +
+                "FROM " + TABLE_APPOINTMENTS + " a " +
+                "LEFT JOIN " + TABLE_USERS + " u ON a.counselor_name = u.username " +
+                "WHERE a.user_name = ? " +
+                "ORDER BY a.timestamp DESC";
+
+        Cursor cursor = db.rawQuery(query, new String[]{username});
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                String counselorName = cursor.getString(0);
+                String status = cursor.getString(1);
+                String time = cursor.getString(2);
+                byte[] avatar = cursor.getBlob(3);
+
+                Appointment appt = new Appointment(counselorName, time, status, avatar);
+                list.add(appt);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+
+        return list;
+    }
 }

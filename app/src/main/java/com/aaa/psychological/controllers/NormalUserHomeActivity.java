@@ -1,8 +1,12 @@
 package com.aaa.psychological.controllers;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,8 +14,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.aaa.psychological.R;
+import com.aaa.psychological.adapters.AppointmentAdapter;
 import com.aaa.psychological.adapters.CounselorAdapter;
 import com.aaa.psychological.helpers.DatabaseHelper;
+import com.aaa.psychological.models.Appointment;
 import com.aaa.psychological.models.Counselor;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.ArrayList;
@@ -30,10 +36,23 @@ public class NormalUserHomeActivity extends AppCompatActivity {
     private List<Counselor> counselorList = new ArrayList<>();
     private CounselorAdapter counselorAdapter;
 
+    private ListView lvAppointments;
+    private LinearLayout layoutCounselorList;
+
+    private String currentUsername;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_normal_user_home);
+
+        lvAppointments = findViewById(R.id.lvAppointments);
+        layoutCounselorList = findViewById(R.id.layoutCounselorList);
+
+
+        currentUsername = getIntent().getStringExtra("username");
         dbHelper = new DatabaseHelper(this);
 
         // 1. 绑定 Toolbar
@@ -48,7 +67,7 @@ public class NormalUserHomeActivity extends AppCompatActivity {
         rvCounselorList.setLayoutManager(new LinearLayoutManager(this));
 
         // 3. 初始化并设置 Adapter（这里用自定义的 CounselorAdapter）
-        counselorAdapter = new CounselorAdapter(counselorList, this);
+        counselorAdapter = new CounselorAdapter(counselorList, this, currentUsername);
         rvCounselorList.setAdapter(counselorAdapter);
 
         // 4. 绑定 BottomNavigationView 并监听切换
@@ -60,16 +79,17 @@ public class NormalUserHomeActivity extends AppCompatActivity {
 
                 // 如果是 “首页” 图标被点了
                 if (id == R.id.nav_home) {
-                    loadCounselorList();
+                    lvAppointments.setVisibility(View.GONE);
+                    layoutCounselorList.setVisibility(View.VISIBLE);
+                    loadCounselorList();  // 可刷新数据
                     return true;
                 }
                 // 如果是 “预约记录” 图标被点了
                 else if (id == R.id.nav_records) {
-                    // 这里你可以用 Intent 跳转到 AppointmentRecordsActivity
-                    // Intent intent = new Intent(NormalUserHomeActivity.this, AppointmentRecordsActivity.class);
-                    // startActivity(intent);
+                    showAppointmentRecords();
                     return true;
                 }
+
                 // 如果是 “消息” 图标被点了
                 else if (id == R.id.nav_messages) {
                     // 跳转到 ChatListActivity
@@ -108,5 +128,18 @@ public class NormalUserHomeActivity extends AppCompatActivity {
             counselorAdapter.notifyDataSetChanged();
         }
     }
+
+    /**
+     * 显示预约记录
+     */
+    private void showAppointmentRecords() {
+        layoutCounselorList.setVisibility(View.GONE);
+        lvAppointments.setVisibility(View.VISIBLE);
+
+        List<Appointment> records = dbHelper.getAppointmentsDetailedByUser(currentUsername);
+        AppointmentAdapter adapter = new AppointmentAdapter(this, records);
+        lvAppointments.setAdapter(adapter);
+    }
+
 
 }
