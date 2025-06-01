@@ -63,7 +63,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_search"
-                        android:tint="#888888" />
+                        app:tint="#888888" />
 
                     <EditText
                         android:id="@+id/etSearch"
@@ -124,6 +124,136 @@
             android:divider="@android:color/darker_gray"
             android:dividerHeight="1dp"
             android:padding="16dp" />
+
+        <!-- 我的 页面视图 -->
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scrollMyProfile"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="24dp"
+            android:visibility="gone"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:id="@+id/layoutMyProfile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:padding="24dp"
+                android:background="#F9F9FB">
+
+                <!-- 头像 -->
+                <ImageView
+                    android:id="@+id/imgAvatar"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="8dp"
+                    android:src="@drawable/ic_default_avatar"
+                    android:scaleType="centerCrop"
+                    android:padding="4dp" />
+
+                <!-- 修改头像 -->
+                <TextView
+                    android:id="@+id/btnChangeAvatar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="修改头像"
+                    android:textStyle="bold"
+                    android:background="@drawable/bg_text_action"
+                    android:padding="6dp"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- 用户信息卡片 -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="4dp"
+                    android:layout_marginBottom="12dp"
+                    app:cardBackgroundColor="@android:color/white">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp"
+                        android:gravity="center_horizontal">
+
+                        <TextView
+                            android:id="@+id/tvUsernameProfile"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="用户名：张三"
+                            android:gravity="center"
+                            android:textSize="16sp"
+                            android:textColor="#222222" />
+
+                        <TextView
+                            android:id="@+id/tvAppointmentStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="预约状态：未预约"
+                            android:gravity="center"
+                            android:textSize="14sp"
+                            android:textColor="#666666"
+                            android:layout_marginTop="4dp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- 操作列表块 -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="3dp"
+                    app:cardBackgroundColor="@android:color/white">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:divider="?android:attr/dividerHorizontal"
+                        android:showDividers="middle"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/btnChangeUsername"
+                            style="@style/ProfileItemStyle"
+                            android:text="修改用户名"
+                            android:gravity="center"/>
+
+                        <TextView
+                            android:id="@+id/btnChangePassword"
+                            style="@style/ProfileItemStyle"
+                            android:text="修改密码"
+                            android:gravity="center"/>
+
+                        <TextView
+                            android:id="@+id/btnFeedback"
+                            style="@style/ProfileItemStyle"
+                            android:text="反馈给咨询师"
+                            android:gravity="center"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- 退出按钮 -->
+                <Button
+                    android:id="@+id/btnLogout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="退出登录"
+                    android:textAllCaps="false"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginBottom="16dp" />
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
     </FrameLayout>
 
     <!-- 底部导航栏 -->

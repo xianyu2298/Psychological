@@ -104,7 +104,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public Cursor getUserByUsername(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String[] columns = {COLUMN_ID, COLUMN_USERNAME, COLUMN_PASSWORD, COLUMN_ROLE};
+        String[] columns = {COLUMN_ID, COLUMN_USERNAME, COLUMN_PASSWORD, COLUMN_ROLE, COLUMN_AVATAR};
         String selection = COLUMN_USERNAME + " = ?";
         String[] selectionArgs = { username };
 
@@ -253,4 +253,72 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return list;
     }
+
+    // 获取用户最近一条预约状态（普通用户）
+    public String getLatestAppointmentStatusForUser(String username) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String status = "未预约"; // 默认状态
+
+        Cursor cursor = db.query("appointments",
+                new String[]{"status"},
+                "user_name = ?",
+                new String[]{username},
+                null, null,
+                "timestamp DESC",
+                "1");
+
+        if (cursor != null && cursor.moveToFirst()) {
+            status = cursor.getString(cursor.getColumnIndexOrThrow("status"));
+            cursor.close();
+        }
+
+        return status;
+    }
+
+    // 获取咨询师最近一条预约状态（作为 counselor）
+    public String getLatestAppointmentStatusForCounselor(String counselorName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String status = "暂无预约"; // 默认状态
+
+        Cursor cursor = db.query("appointments",
+                new String[]{"status"},
+                "counselor_name = ?",
+                new String[]{counselorName},
+                null, null,
+                "timestamp DESC",
+                "1");
+
+        if (cursor != null && cursor.moveToFirst()) {
+            status = cursor.getString(cursor.getColumnIndexOrThrow("status"));
+            cursor.close();
+        }
+
+        return status;
+    }
+    // 更新用户头像
+    public void updateUserAvatar(String username, byte[] avatarBytes) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("avatar", avatarBytes);
+        db.update("users", values, "username = ?", new String[]{username});
+    }
+
+    // 更新用户名
+    public boolean updateUsername(String oldUsername, String newUsername) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("username", newUsername);
+        int affected = db.update("users", values, "username = ?", new String[]{oldUsername});
+        return affected > 0;
+    }
+
+    // 更新用户密码
+    public void updateUserPassword(String username, String newPassword) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("password", newPassword);
+        db.update("users", values, "username = ?", new String[]{username});
+    }
+
+
 }
