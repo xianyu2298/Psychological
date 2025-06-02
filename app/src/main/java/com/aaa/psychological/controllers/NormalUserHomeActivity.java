@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.aaa.psychological.R;
 import com.aaa.psychological.adapters.AppointmentAdapter;
+import com.aaa.psychological.adapters.BannerAdapter;
 import com.aaa.psychological.adapters.CounselorAdapter;
 import com.aaa.psychological.helpers.DatabaseHelper;
 import com.aaa.psychological.models.Appointment;
@@ -28,6 +29,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import com.aaa.psychological.models.Counselor;
 
@@ -39,7 +41,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.core.widget.NestedScrollView;
-
+import androidx.viewpager2.widget.ViewPager2;
 
 
 public class NormalUserHomeActivity extends AppCompatActivity {
@@ -70,6 +72,8 @@ public class NormalUserHomeActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_PICK_IMAGE = 101;
 
+    private ViewPager2 bannerViewPager;
+
 
 
     @Override
@@ -91,6 +95,15 @@ public class NormalUserHomeActivity extends AppCompatActivity {
         btnChangePassword = findViewById(R.id.btnChangePassword);
         btnFeedback = findViewById(R.id.btnFeedback);
         btnChangeAvatar = findViewById(R.id.btnChangeAvatar);
+
+        bannerViewPager = findViewById(R.id.bannerViewPager);
+        List<Integer> bannerImages = Arrays.asList(
+                R.drawable.banner1,
+                R.drawable.banner2,
+                R.drawable.banner3
+        );
+        BannerAdapter bannerAdapter = new BannerAdapter(bannerImages);
+        bannerViewPager.setAdapter(bannerAdapter);
 
         btnChangeAvatar.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK);

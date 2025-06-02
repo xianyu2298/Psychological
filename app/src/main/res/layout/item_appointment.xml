@@ -45,10 +45,17 @@
         android:id="@+id/tvStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="待确认"
-        android:textColor="#ffffff"
-        android:padding="4dp"
-        android:background="@drawable/status_bg_pending"
-        android:textSize="12sp"
-        android:layout_marginStart="8dp" />
+        android:minWidth="60dp"
+        android:gravity="center"
+        android:text="已预约"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:layout_gravity="center_vertical"
+        android:background="@drawable/bg_status_reserved"
+        android:textColor="@color/orange" />
+
 </LinearLayout>

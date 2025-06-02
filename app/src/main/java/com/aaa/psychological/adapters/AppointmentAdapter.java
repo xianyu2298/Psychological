@@ -42,13 +42,27 @@ public class AppointmentAdapter extends ArrayAdapter<Appointment> {
         tvTime.setText("预约时间：" + appt.getTime());
         tvStatus.setText(appt.getStatus());
 
-        if (appt.getAvatarBytes() != null) {
-            Bitmap bitmap = BitmapFactory.decodeByteArray(appt.getAvatarBytes(), 0, appt.getAvatarBytes().length);
-            imgAvatar.setImageBitmap(bitmap);
-        } else {
-            imgAvatar.setImageResource(R.drawable.ic_default_avatar);
+        switch (appt.getStatus()) {
+            case "已预约":
+                tvStatus.setBackgroundResource(R.drawable.bg_status_reserved);
+                tvStatus.setTextColor(context.getColor(R.color.orange));
+                break;
+            case "心理治疗中":
+                tvStatus.setBackgroundResource(R.drawable.bg_status_in_session);
+                tvStatus.setTextColor(context.getColor(R.color.blue));
+                break;
+            case "已完成":
+                tvStatus.setBackgroundResource(R.drawable.bg_status_completed);
+                tvStatus.setTextColor(context.getColor(R.color.green));
+                break;
+            default:
+                tvStatus.setBackgroundResource(R.drawable.bg_status_reserved);
+                tvStatus.setTextColor(context.getColor(R.color.gray));
+                break;
         }
 
+
         return convertView;
+
     }
 }

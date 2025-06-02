@@ -16,4 +16,8 @@
     <color name="light_gray">#F0F0F0</color>
     <color name="medium_gray">#DDDDDD</color>
     <color name="dark_gray">#777777</color>
+    <color name="orange">#FFA726</color>
+    <color name="blue">#2196F3</color>
+    <color name="green">#43A047</color>
+    <color name="gray">#888888</color>
 </resources>

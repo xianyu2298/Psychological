@@ -46,6 +46,16 @@
                 android:orientation="vertical"
                 android:paddingBottom="56dp">
 
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/bannerViewPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:layout_margin="16dp"
+                    android:clipToPadding="false"
+                    android:clipChildren="false"
+                    android:overScrollMode="never" />
+
+
                 <!-- 搜索栏 -->
                 <LinearLayout
                     android:id="@+id/searchContainer"
@@ -79,16 +89,31 @@
                 </LinearLayout>
 
                 <!-- 标题 -->
-                <TextView
-                    android:id="@+id/tvSectionTitle"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
                     android:layout_marginTop="8dp"
-                    android:text="全部咨询师"
-                    android:textColor="#222222"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:layout_marginStart="16dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_counselor"
+                        android:layout_marginEnd="8dp"
+                        app:tint="#673AB7" />
+
+                    <TextView
+                        android:id="@+id/tvSectionTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="全部咨询师"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#222222" />
+                </LinearLayout>
+
 
                 <!-- 咨询师列表 -->
                 <androidx.recyclerview.widget.RecyclerView
