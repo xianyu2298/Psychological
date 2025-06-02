@@ -23,8 +23,10 @@
         <activity android:name=".controllers.NormalUserHomeActivity" />
         <activity android:name=".controllers.CounselorHomeActivity" />
         <activity android:name=".controllers.AppointmentRecordsActivity" />
+        <activity android:name=".controllers.ChatActivity" />
 
 
     </application>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
 </manifest>

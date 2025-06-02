@@ -62,6 +62,7 @@ public class NormalUserHomeActivity extends AppCompatActivity {
     private CounselorAdapter counselorAdapter;
 
     private ListView lvAppointments;
+    private ListView lvMessageList;
     private LinearLayout layoutCounselorList;
 
     private String currentUsername;
@@ -80,8 +81,10 @@ public class NormalUserHomeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_normal_user_home);
+        lvMessageList = findViewById(R.id.lvMessageList);
 
         lvAppointments = findViewById(R.id.lvAppointments);
         layoutCounselorList = findViewById(R.id.layoutCounselorList);
@@ -229,9 +232,7 @@ public class NormalUserHomeActivity extends AppCompatActivity {
 
                 // 如果是 “消息” 图标被点了
                 else if (id == R.id.nav_messages) {
-                    // 跳转到 ChatListActivity
-                    // Intent intent = new Intent(NormalUserHomeActivity.this, ChatListActivity.class);
-                    // startActivity(intent);
+                    showMessageList();
                     return true;
                 }
                 // 如果是 “我的” 图标被点了
@@ -322,6 +323,7 @@ public class NormalUserHomeActivity extends AppCompatActivity {
         layoutCounselorList.setVisibility(View.GONE);
         lvAppointments.setVisibility(View.GONE);
         scrollMyProfile.setVisibility(View.GONE);
+        lvMessageList.setVisibility(View.GONE);
     }
 
     @Override
@@ -360,6 +362,25 @@ public class NormalUserHomeActivity extends AppCompatActivity {
             sliderHandler.removeCallbacks(sliderRunnable);
         }
     }
+
+    private void showMessageList() {
+        lvMessageList.setVisibility(View.VISIBLE);
+
+        List<String> counselorNames = dbHelper.getBookedCounselorsForUser(currentUsername);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, counselorNames);
+        lvMessageList.setAdapter(adapter);
+
+        lvMessageList.setOnItemClickListener((parent, view, position, id) -> {
+            String counselorName = counselorNames.get(position);
+            Intent intent = new Intent(NormalUserHomeActivity.this, ChatActivity.class);
+            intent.putExtra("sender", currentUsername);
+            intent.putExtra("receiver", counselorName);
+            startActivity(intent);
+        });
+    }
+
 
 }
 

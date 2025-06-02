@@ -117,6 +117,13 @@
             android:visibility="gone"
             android:padding="16dp" />
 
+        <ListView
+            android:id="@+id/lvMessageList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            />
+
         <!-- 我的 页面视图 -->
         <androidx.core.widget.NestedScrollView
             android:id="@+id/scrollMyProfile"

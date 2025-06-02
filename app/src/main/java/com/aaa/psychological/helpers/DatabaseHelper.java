@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 
 import com.aaa.psychological.models.Appointment;
 import com.aaa.psychological.models.Counselor;
+import com.aaa.psychological.models.Message;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +69,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // 创建用户表
         db.execSQL(CREATE_TABLE_USERS);
         db.execSQL(CREATE_TABLE_APPOINTMENTS);
+
+        db.execSQL("CREATE TABLE IF NOT EXISTS messages (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "sender TEXT NOT NULL, " +
+                "receiver TEXT NOT NULL, " +
+                "content TEXT NOT NULL, " +
+                "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
+
     }
 
     @Override
@@ -370,5 +379,57 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public List<String> getBookedCounselorsForUser(String userName) {
+        List<String> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT DISTINCT counselor_name FROM appointments " +
+                        "WHERE user_name = ? AND status IN ('已预约', '心理治疗中', '已完成')",
+                new String[]{userName}
+        );
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                list.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return list;
+    }
+
+
+
+    // 添加一条消息
+    public void insertMessage(String sender, String receiver, String content) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("sender", sender);
+        values.put("receiver", receiver);
+        values.put("content", content);
+        db.insert("messages", null, values);
+        db.close();
+    }
+
+    // 查询两人之间所有聊天记录（按时间排序）
+    public List<Message> getMessagesBetween(String user1, String user2) {
+        List<Message> messages = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(
+                "SELECT sender, content, timestamp FROM messages WHERE " +
+                        "(sender = ? AND receiver = ?) OR (sender = ? AND receiver = ?) " +
+                        "ORDER BY timestamp ASC",
+                new String[]{user1, user2, user2, user1});
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                String sender = cursor.getString(0);
+                String content = cursor.getString(1);
+                String timestamp = cursor.getString(2);
+                messages.add(new Message(sender, content, timestamp));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+
+        return messages;
+    }
 
 }

@@ -28,6 +28,7 @@ import com.aaa.psychological.helpers.DatabaseHelper;
 import com.aaa.psychological.models.Appointment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -53,6 +54,8 @@ public class CounselorHomeActivity extends AppCompatActivity {
     private Runnable sliderRunnable;
     private ViewPager2 bannerViewPager;
 
+    private ListView lvMessageList;
+
 
 
     @Override
@@ -62,6 +65,7 @@ public class CounselorHomeActivity extends AppCompatActivity {
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        lvMessageList = findViewById(R.id.lvMessageList);
 
         lvAppointments = findViewById(R.id.lvAppointments);
 
@@ -132,6 +136,9 @@ public class CounselorHomeActivity extends AppCompatActivity {
             lvAppointments.setVisibility(View.VISIBLE);
             showAppointmentRecords();
             return true;
+        }else if (id == R.id.nav_messages) {
+            showMessageList();
+            return true;
         }
         return false;
     }
@@ -181,6 +188,7 @@ public class CounselorHomeActivity extends AppCompatActivity {
         layoutCounselorList.setVisibility(LinearLayout.GONE);
         scrollMyProfile.setVisibility(NestedScrollView.GONE);
         lvAppointments.setVisibility(View.GONE);
+        lvMessageList.setVisibility(View.GONE);
     }
 
     private void showAppointmentDialog(Appointment appt) {
@@ -239,6 +247,31 @@ public class CounselorHomeActivity extends AppCompatActivity {
         if (sliderHandler != null && sliderRunnable != null) {
             sliderHandler.removeCallbacks(sliderRunnable);
         }
+    }
+
+    private void showMessageList() {
+        lvMessageList.setVisibility(View.VISIBLE);
+
+        List<Appointment> appointments = dbHelper.getAppointmentsByCounselor(currentUsername);
+        List<String> activeUsers = new ArrayList<>();
+
+        for (Appointment a : appointments) {
+            if ("心理治疗中".equals(a.getStatus())) {
+                activeUsers.add(a.getCounselorName()); // 注意：这个字段是 user_name
+            }
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, activeUsers);
+        lvMessageList.setAdapter(adapter);
+
+        lvMessageList.setOnItemClickListener((parent, view, position, id) -> {
+            String user = activeUsers.get(position);
+            Intent intent = new Intent(CounselorHomeActivity.this, ChatActivity.class);
+            intent.putExtra("sender", currentUsername);  // 咨询师是发送方
+            intent.putExtra("receiver", user);           // 用户是接收方
+            startActivity(intent);
+        });
     }
 
 }
