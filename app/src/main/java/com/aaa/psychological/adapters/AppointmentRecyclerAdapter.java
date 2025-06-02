@@ -56,6 +56,13 @@ public class AppointmentRecyclerAdapter extends RecyclerView.Adapter<Appointment
         String status = appt.getStatus();
         holder.tvStatus.setText(status);
 
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(appt);
+            }
+        });
+
+
         switch (status) {
             case "已预约":
                 holder.tvStatus.setBackgroundResource(R.drawable.bg_status_reserved);
@@ -88,5 +95,16 @@ public class AppointmentRecyclerAdapter extends RecyclerView.Adapter<Appointment
     public int getItemCount() {
         return appointmentList.size();
     }
+
+    public interface OnItemClickListener {
+        void onItemClick(Appointment appointment);
+    }
+
+    private OnItemClickListener listener;
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
+
 }
 

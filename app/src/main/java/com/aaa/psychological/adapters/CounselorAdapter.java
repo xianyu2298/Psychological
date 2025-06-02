@@ -1,19 +1,19 @@
 package com.aaa.psychological.adapters;
 
 import android.content.Context;
-import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.aaa.psychological.R;
 import com.aaa.psychological.helpers.DatabaseHelper;
 import com.aaa.psychological.models.Counselor;
@@ -24,7 +24,6 @@ public class CounselorAdapter extends RecyclerView.Adapter<CounselorAdapter.View
 
     private final List<Counselor> counselorList;
     private final Context context;
-
     private final String currentUsername;
 
     public CounselorAdapter(List<Counselor> list, Context context, String currentUsername) {
@@ -35,64 +34,74 @@ public class CounselorAdapter extends RecyclerView.Adapter<CounselorAdapter.View
 
     @NonNull
     @Override
-    public CounselorAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_counselor, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CounselorAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Counselor c = counselorList.get(position);
+        DatabaseHelper dbHelper = new DatabaseHelper(context);
 
         holder.tvCounselorName.setText(c.getName());
         holder.tvCounselorInfo.setText(c.getInfo());
         holder.tvCounselorTime.setText("可预约时间：" + c.getAvailable());
 
-        // 头像加载：优先使用数据库中的 byte[] 数据
+        // 显示咨询师头像
         if (c.getAvatarBytes() != null) {
             Bitmap bitmap = BitmapFactory.decodeByteArray(c.getAvatarBytes(), 0, c.getAvatarBytes().length);
             holder.imgCounselorAvatar.setImageBitmap(bitmap);
         } else {
-            holder.imgCounselorAvatar.setImageResource(c.getAvatarResId());  // 默认头像
+            holder.imgCounselorAvatar.setImageResource(c.getAvatarResId());
         }
 
-        // 预约按钮点击事件
-        holder.btnBook.setOnClickListener(v -> {
-            DatabaseHelper dbHelper = new DatabaseHelper(context);
-            boolean success = dbHelper.insertAppointment(currentUsername, c.getName(), c.getAvatarBytes());
-            if (success) {
-                Toast.makeText(context, "预约成功！", Toast.LENGTH_SHORT).show();
-                holder.btnBook.setEnabled(false); // 禁止重复预约
-            } else {
-                Toast.makeText(context, "预约失败", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // 判断是否已预约该咨询师
-        DatabaseHelper dbHelper = new DatabaseHelper(context);
+        // 判断是否已预约
         boolean alreadyBooked = dbHelper.hasUserAlreadyBooked(currentUsername, c.getName());
+        updateButtonState(holder.btnBook, alreadyBooked);
 
-        if (alreadyBooked) {
-            holder.btnBook.setEnabled(false);
-            holder.btnBook.setText("已预约");
-        } else {
-            holder.btnBook.setEnabled(true);
-            holder.btnBook.setText("预约");
-        }
-
-        // 点击预约按钮
+        // 点击按钮逻辑
         holder.btnBook.setOnClickListener(v -> {
-            boolean success = dbHelper.insertAppointment(currentUsername, c.getName(), c.getAvatarBytes());
-            if (success) {
-                Toast.makeText(context, "预约成功", Toast.LENGTH_SHORT).show();
-                holder.btnBook.setEnabled(false);
-                holder.btnBook.setText("已预约");
+            boolean booked = dbHelper.hasUserAlreadyBooked(currentUsername, c.getName());
+
+            if (booked) {
+                // 取消预约
+                dbHelper.deleteAppointment(currentUsername, c.getName());
+                updateButtonState(holder.btnBook, false);
+                Toast.makeText(context, "已取消预约", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(context, "预约失败", Toast.LENGTH_SHORT).show();
+                // 查询当前用户头像
+                byte[] userAvatar = null;
+                Cursor userCursor = dbHelper.getUserByUsername(currentUsername);
+                if (userCursor != null && userCursor.moveToFirst()) {
+                    userAvatar = userCursor.getBlob(userCursor.getColumnIndexOrThrow("avatar"));
+                    userCursor.close();
+                }
+
+                byte[] counselorAvatar = c.getAvatarBytes();
+
+                boolean success = dbHelper.insertAppointment(currentUsername, c.getName(), userAvatar, counselorAvatar);
+
+                if (success) {
+                    updateButtonState(holder.btnBook, true);
+                    Toast.makeText(context, "预约成功", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "预约失败", Toast.LENGTH_SHORT).show();
+                }
             }
         });
+    }
 
-
+    private void updateButtonState(TextView button, boolean booked) {
+        if (booked) {
+            button.setText("已预约");
+            button.setBackgroundResource(R.drawable.bg_status_reserved);
+            button.setTextColor(context.getResources().getColor(R.color.orange));
+        } else {
+            button.setText("预约");
+            button.setBackgroundResource(R.drawable.bg_button_book);
+            button.setTextColor(context.getResources().getColor(android.R.color.white));
+        }
     }
 
     @Override
@@ -103,7 +112,7 @@ public class CounselorAdapter extends RecyclerView.Adapter<CounselorAdapter.View
     static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imgCounselorAvatar;
         TextView tvCounselorName, tvCounselorInfo, tvCounselorTime;
-        Button btnBook;
+        TextView btnBook;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);

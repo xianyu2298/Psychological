@@ -2,14 +2,18 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="6dp"
     android:background="@drawable/banner_card_bg">
 
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/imgBanner"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/banner1" />
+        android:src="@drawable/banner1"
+        app:shapeAppearanceOverlay="@style/RoundedBannerImage"
+        android:layout_margin="6dp" />
+
 
 </FrameLayout>

@@ -54,7 +54,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "counselor_name TEXT NOT NULL, " +
                     "status TEXT NOT NULL DEFAULT '已预约', " +
                     "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, " +
-                    "avatar BLOB" +
+                    "counselor_avatar BLOB," +
+                    "user_avatar BLOB" +
                     ");";
 
 
@@ -168,14 +169,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * 预约方法
      */
-    public boolean insertAppointment(String userName, String counselorName, byte[] avatar) {
+    public boolean insertAppointment(String userName, String counselorName, byte[] userAvatar, byte[] counselorAvatar)
+    {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("user_name", userName);
         values.put("counselor_name", counselorName);
         values.put("status", "已预约");
-        values.put("avatar", avatar);
-        long result = db.insert(TABLE_APPOINTMENTS, null, values);
+        values.put("user_avatar", userAvatar);
+        values.put("counselor_avatar", counselorAvatar);
+        long result = db.insert("appointments", null, values);
         db.close();
         return result != -1;
     }
@@ -231,7 +234,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Appointment> list = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String query = "SELECT a.counselor_name, a.status, a.timestamp, u.avatar " +
+        String query = "SELECT a.counselor_name, a.status, a.timestamp, a.counselor_avatar " +
                 "FROM " + TABLE_APPOINTMENTS + " a " +
                 "LEFT JOIN " + TABLE_USERS + " u ON a.counselor_name = u.username " +
                 "WHERE a.user_name = ? " +
@@ -327,7 +330,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Appointment> list = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String query = "SELECT a.user_name, a.status, a.timestamp, u.avatar " +
+        String query = "SELECT a.user_name, a.status, a.timestamp, a.user_avatar " +
                 "FROM appointments a " +
                 "LEFT JOIN users u ON a.user_name = u.username " +
                 "WHERE a.counselor_name = ? " +
@@ -348,6 +351,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         return list;
+    }
+
+    // 咨询师更新预约状态
+    public void updateAppointmentStatus(String userName, String counselorName, String newStatus) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("status", newStatus);
+        db.update("appointments", values, "user_name = ? AND counselor_name = ?", new String[]{userName, counselorName});
+        db.close();
+    }
+
+    //普通用户取消预约
+    public void deleteAppointment(String username, String counselorName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("appointments", "user_name = ? AND counselor_name = ?",
+                new String[]{username, counselorName});
+        db.close();
     }
 
 

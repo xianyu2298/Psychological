@@ -55,7 +55,6 @@
                     android:clipChildren="false"
                     android:overScrollMode="never" />
 
-
                 <!-- 标题 -->
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -113,9 +112,9 @@
             android:id="@+id/lvAppointments"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
             android:divider="@android:color/darker_gray"
             android:dividerHeight="1dp"
+            android:visibility="gone"
             android:padding="16dp" />
 
         <!-- 我的 页面视图 -->

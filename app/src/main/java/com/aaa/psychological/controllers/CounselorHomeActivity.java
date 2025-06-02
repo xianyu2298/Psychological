@@ -5,9 +5,14 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.*;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.NestedScrollView;
@@ -42,6 +47,14 @@ public class CounselorHomeActivity extends AppCompatActivity {
     private TextView tvUsernameProfile, tvAppointmentStatus;
     private Button btnLogout;
 
+    private ListView lvAppointments;
+
+    private Handler sliderHandler;
+    private Runnable sliderRunnable;
+    private ViewPager2 bannerViewPager;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +62,9 @@ public class CounselorHomeActivity extends AppCompatActivity {
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        lvAppointments = findViewById(R.id.lvAppointments);
+
 
         dbHelper = new DatabaseHelper(this);
         currentUsername = getIntent().getStringExtra("username");
@@ -77,6 +93,27 @@ public class CounselorHomeActivity extends AppCompatActivity {
         );
         BannerAdapter bannerAdapter = new BannerAdapter(banners);
         bannerViewPager.setAdapter(bannerAdapter);
+
+        // 自动轮播逻辑
+        sliderHandler = new Handler(Looper.getMainLooper());
+        sliderRunnable = new Runnable() {
+            @Override
+            public void run() {
+                int currentItem = bannerViewPager.getCurrentItem();
+                int nextItem = (currentItem + 1) % bannerAdapter.getItemCount();
+                bannerViewPager.setCurrentItem(nextItem, true);
+                sliderHandler.postDelayed(this, 3000);
+            }
+        };
+        sliderHandler.postDelayed(sliderRunnable, 3000);
+
+        bannerViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                sliderHandler.removeCallbacks(sliderRunnable);
+                sliderHandler.postDelayed(sliderRunnable, 3000);
+            }
+        });
     }
 
     private boolean onBottomNavSelected(@NonNull MenuItem item) {
@@ -90,6 +127,10 @@ public class CounselorHomeActivity extends AppCompatActivity {
         } else if (id == R.id.nav_profile) {
             scrollMyProfile.setVisibility(NestedScrollView.VISIBLE);
             showMyProfile();
+            return true;
+        } else if (id == R.id.nav_records) {
+            lvAppointments.setVisibility(View.VISIBLE);
+            showAppointmentRecords();
             return true;
         }
         return false;
@@ -107,6 +148,11 @@ public class CounselorHomeActivity extends AppCompatActivity {
             AppointmentRecyclerAdapter adapter = new AppointmentRecyclerAdapter(this, appointments);
             rvCounselorList.setAdapter(adapter);
         }
+
+        AppointmentRecyclerAdapter adapter = new AppointmentRecyclerAdapter(this, appointments);
+        adapter.setOnItemClickListener(appt -> showAppointmentDialog(appt));
+        rvCounselorList.setAdapter(adapter);
+
     }
 
     private void showMyProfile() {
@@ -134,5 +180,65 @@ public class CounselorHomeActivity extends AppCompatActivity {
     private void hideAllViews() {
         layoutCounselorList.setVisibility(LinearLayout.GONE);
         scrollMyProfile.setVisibility(NestedScrollView.GONE);
+        lvAppointments.setVisibility(View.GONE);
     }
+
+    private void showAppointmentDialog(Appointment appt) {
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_user_detail, null);
+
+        ImageView imgUser = dialogView.findViewById(R.id.imgUser);
+        TextView tvName = dialogView.findViewById(R.id.tvUserName);
+        TextView tvTime = dialogView.findViewById(R.id.tvTime);
+        Button btnCancel = dialogView.findViewById(R.id.btnCancel);
+        Button btnTreat = dialogView.findViewById(R.id.btnTreat);
+
+        tvName.setText("用户名：" + appt.getCounselorName());
+        tvTime.setText("预约时间：" + appt.getTime());
+        if (appt.getAvatarBytes() != null) {
+            Bitmap bmp = BitmapFactory.decodeByteArray(appt.getAvatarBytes(), 0, appt.getAvatarBytes().length);
+            imgUser.setImageBitmap(bmp);
+        }
+
+        AlertDialog dialog = builder.setView(dialogView).create();
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        btnTreat.setOnClickListener(v -> {
+            dbHelper.updateAppointmentStatus(appt.getCounselorName(), currentUsername, "心理治疗中");
+            loadAppointmentsForCounselor();
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
+    private void showAppointmentRecords() {
+        List<Appointment> all = dbHelper.getAppointmentsByCounselor(currentUsername);
+        List<Appointment> filtered = new java.util.ArrayList<>();
+
+        for (Appointment a : all) {
+            if ("心理治疗中".equals(a.getStatus()) || "已完成".equals(a.getStatus())) {
+                filtered.add(a);
+            }
+        }
+
+        AppointmentAdapter adapter = new AppointmentAdapter(this, filtered);
+        lvAppointments.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (sliderHandler != null && sliderRunnable != null) {
+            sliderHandler.removeCallbacks(sliderRunnable);
+        }
+    }
+
 }

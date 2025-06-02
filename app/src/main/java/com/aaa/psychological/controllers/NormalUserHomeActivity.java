@@ -46,6 +46,11 @@ import androidx.viewpager2.widget.ViewPager2;
 
 public class NormalUserHomeActivity extends AppCompatActivity {
 
+    private android.os.Handler sliderHandler;
+    private Runnable sliderRunnable;
+    private ViewPager2 bannerViewPager;
+
+
     private Toolbar toolbar;
     private RecyclerView rvCounselorList;
     private TextView tvEmptyPlaceholder;
@@ -71,9 +76,6 @@ public class NormalUserHomeActivity extends AppCompatActivity {
     private TextView btnChangeAvatar, btnChangeUsername, btnChangePassword, btnFeedback;
 
     private static final int REQUEST_CODE_PICK_IMAGE = 101;
-
-    private ViewPager2 bannerViewPager;
-
 
 
     @Override
@@ -104,6 +106,24 @@ public class NormalUserHomeActivity extends AppCompatActivity {
         );
         BannerAdapter bannerAdapter = new BannerAdapter(bannerImages);
         bannerViewPager.setAdapter(bannerAdapter);
+        // 自动轮播逻辑
+        sliderHandler = new android.os.Handler();
+        sliderRunnable = new Runnable() {
+            @Override
+            public void run() {
+                int nextItem = (bannerViewPager.getCurrentItem() + 1) % bannerImages.size();
+                bannerViewPager.setCurrentItem(nextItem, true);
+                sliderHandler.postDelayed(this, 2000);
+            }
+        };
+        bannerViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                sliderHandler.removeCallbacks(sliderRunnable);
+                sliderHandler.postDelayed(sliderRunnable, 2000);
+            }
+        });
+        sliderHandler.postDelayed(sliderRunnable, 2000);
 
         btnChangeAvatar.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK);
@@ -333,5 +353,13 @@ public class NormalUserHomeActivity extends AppCompatActivity {
         }
         return byteBuffer.toByteArray();
     }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (sliderHandler != null && sliderRunnable != null) {
+            sliderHandler.removeCallbacks(sliderRunnable);
+        }
+    }
 
 }
+

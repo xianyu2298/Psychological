@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@drawable/bg_dialog_card"
+    android:gravity="center_horizontal">
+
+    <!-- 用户头像 -->
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/imgUser"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="12dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_default_avatar"
+        app:shapeAppearanceOverlay="@style/RoundedFullImage" />
+
+    <!-- 用户名 -->
+    <TextView
+        android:id="@+id/tvUserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="用户名：张三"
+        android:textSize="16sp"
+        android:textColor="#222222"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <!-- 预约时间 -->
+    <TextView
+        android:id="@+id/tvTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="预约时间：2025-06-02 07:36:07"
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:layout_marginBottom="20dp" />
+
+    <!-- 按钮区域 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="8dp">
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="取消"
+            android:background="@drawable/bg_button_book"
+            android:textColor="@android:color/white"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_marginEnd="12dp" />
+
+        <Button
+            android:id="@+id/btnTreat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="治疗"
+            android:background="@drawable/bg_button_book"
+            android:textColor="@android:color/white"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp" />
+    </LinearLayout>
+</LinearLayout>

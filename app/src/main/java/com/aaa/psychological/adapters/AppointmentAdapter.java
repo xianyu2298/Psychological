@@ -34,6 +34,13 @@ public class AppointmentAdapter extends ArrayAdapter<Appointment> {
         }
 
         ImageView imgAvatar = convertView.findViewById(R.id.imgAvatar);
+
+        if (appt.getAvatarBytes() != null) {
+            Bitmap bitmap = BitmapFactory.decodeByteArray(appt.getAvatarBytes(), 0, appt.getAvatarBytes().length);
+            imgAvatar.setImageBitmap(bitmap);
+        } else {
+            imgAvatar.setImageResource(R.drawable.ic_default_avatar);
+        }
         TextView tvName = convertView.findViewById(R.id.tvCounselorName);
         TextView tvTime = convertView.findViewById(R.id.tvAppointmentTime);
         TextView tvStatus = convertView.findViewById(R.id.tvStatus);
