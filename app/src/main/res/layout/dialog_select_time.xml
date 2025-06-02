@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <!-- 横向滚动的星期选择 -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <CheckBox android:id="@+id/cbMon" android:text="周一" android:layout_marginEnd="8dp"  android:layout_height="wrap_content" android:layout_width="wrap_content"/>
+            <CheckBox android:id="@+id/cbTue" android:text="周二" android:layout_marginEnd="8dp"  android:layout_height="wrap_content" android:layout_width="wrap_content"/>
+            <CheckBox android:id="@+id/cbWed" android:text="周三" android:layout_marginEnd="8dp"  android:layout_height="wrap_content" android:layout_width="wrap_content"/>
+            <CheckBox android:id="@+id/cbThu" android:text="周四" android:layout_marginEnd="8dp"  android:layout_height="wrap_content" android:layout_width="wrap_content"/>
+            <CheckBox android:id="@+id/cbFri" android:text="周五" android:layout_marginEnd="8dp"  android:layout_height="wrap_content" android:layout_width="wrap_content"/>
+            <CheckBox android:id="@+id/cbSat" android:text="周六" android:layout_marginEnd="8dp"  android:layout_height="wrap_content" android:layout_width="wrap_content"/>
+            <CheckBox android:id="@+id/cbSun" android:text="周日" android:layout_marginEnd="8dp"  android:layout_height="wrap_content" android:layout_width="wrap_content"/>
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- 时间选择区 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="开始时间：" />
+    <TimePicker
+        android:id="@+id/tpStartTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:timePickerMode="spinner" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="结束时间：" />
+    <TimePicker
+        android:id="@+id/tpEndTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:timePickerMode="spinner" />
+
+    <!-- 按钮行 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp"
+        android:gravity="end">
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:text="取消"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/btnConfirm"
+            android:text="确定"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp" />
+    </LinearLayout>
+</LinearLayout>

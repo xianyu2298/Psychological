@@ -40,7 +40,7 @@ public class CounselorHomeActivity extends AppCompatActivity {
 
     private LinearLayout layoutCounselorList;
     private RecyclerView rvCounselorList;
-    private TextView tvEmptyPlaceholder;
+    private TextView tvEmptyPlaceholder, btnFeedback;
     private BottomNavigationView bottomNav;
 
     private NestedScrollView scrollMyProfile;
@@ -60,6 +60,8 @@ public class CounselorHomeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_counselor_home);
 
@@ -117,6 +119,14 @@ public class CounselorHomeActivity extends AppCompatActivity {
                 sliderHandler.removeCallbacks(sliderRunnable);
                 sliderHandler.postDelayed(sliderRunnable, 3000);
             }
+        });
+        //咨询师用户跳转到编辑信息页
+        btnFeedback = findViewById(R.id.btnFeedback);
+        btnFeedback.setText("修改其他信息");
+        btnFeedback.setOnClickListener(v -> {
+            Intent intent = new Intent(CounselorHomeActivity.this, EditCounselorInfoActivity.class);
+            intent.putExtra("username", currentUsername);
+            startActivity(intent);
         });
     }
 

@@ -65,23 +65,26 @@ public class CounselorAdapter extends RecyclerView.Adapter<CounselorAdapter.View
             boolean booked = dbHelper.hasUserAlreadyBooked(currentUsername, c.getName());
 
             if (booked) {
-                // 取消预约
                 dbHelper.deleteAppointment(currentUsername, c.getName());
                 updateButtonState(holder.btnBook, false);
                 Toast.makeText(context, "已取消预约", Toast.LENGTH_SHORT).show();
             } else {
-                // 查询当前用户头像
-                byte[] userAvatar = null;
-                Cursor userCursor = dbHelper.getUserByUsername(currentUsername);
-                if (userCursor != null && userCursor.moveToFirst()) {
-                    userAvatar = userCursor.getBlob(userCursor.getColumnIndexOrThrow("avatar"));
-                    userCursor.close();
+                // 校验当前时间是否在可预约时间段
+                String availableTime = dbHelper.getCounselorAvailableTime(c.getName());
+                if (!isWithinAvailableTime(availableTime)) {
+                    Toast.makeText(context, "当前时间不在咨询师可预约时间段内", Toast.LENGTH_LONG).show();
+                    return;
                 }
 
-                byte[] counselorAvatar = c.getAvatarBytes();
+                // 获取用户头像
+                Cursor cursor = dbHelper.getUserByUsername(currentUsername);
+                byte[] userAvatar = null;
+                if (cursor != null && cursor.moveToFirst()) {
+                    userAvatar = cursor.getBlob(cursor.getColumnIndexOrThrow("avatar"));
+                    cursor.close();
+                }
 
-                boolean success = dbHelper.insertAppointment(currentUsername, c.getName(), userAvatar, counselorAvatar);
-
+                boolean success = dbHelper.insertAppointment(currentUsername, c.getName(), userAvatar, c.getAvatarBytes());
                 if (success) {
                     updateButtonState(holder.btnBook, true);
                     Toast.makeText(context, "预约成功", Toast.LENGTH_SHORT).show();
@@ -90,6 +93,7 @@ public class CounselorAdapter extends RecyclerView.Adapter<CounselorAdapter.View
                 }
             }
         });
+
     }
 
     private void updateButtonState(TextView button, boolean booked) {
@@ -123,4 +127,56 @@ public class CounselorAdapter extends RecyclerView.Adapter<CounselorAdapter.View
             btnBook = itemView.findViewById(R.id.btnBook);
         }
     }
+
+    private boolean isWithinAvailableTime(String availableTime) {
+        if (availableTime == null || availableTime.trim().isEmpty()) return false;
+
+        java.util.Calendar now = java.util.Calendar.getInstance();
+        int dayOfWeek = now.get(java.util.Calendar.DAY_OF_WEEK);
+        int hour = now.get(java.util.Calendar.HOUR_OF_DAY);
+        int minute = now.get(java.util.Calendar.MINUTE);
+        int currentMinutes = hour * 60 + minute;
+        String currentDay = getChineseWeekday(dayOfWeek);
+
+        String[] lines = availableTime.split("\n");
+        for (String line : lines) {
+            if (!line.startsWith(currentDay)) continue;
+
+            // 例如 line: 周一 09:00-17:00
+            line = line.replace(currentDay, "").trim(); // 得到 09:00-17:00
+            if (!line.contains("-")) continue;
+
+            String[] range = line.split("-");
+            if (range.length != 2) continue;
+
+            int startMinutes = timeToMinutes(range[0].trim());
+            int endMinutes = timeToMinutes(range[1].trim());
+
+            if (currentMinutes >= startMinutes && currentMinutes <= endMinutes) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private int timeToMinutes(String time) {
+        String[] parts = time.split(":");
+        if (parts.length != 2) return -1;
+        return Integer.parseInt(parts[0]) * 60 + Integer.parseInt(parts[1]);
+    }
+
+
+    private String getChineseWeekday(int day) {
+        switch (day) {
+            case java.util.Calendar.MONDAY: return "周一";
+            case java.util.Calendar.TUESDAY: return "周二";
+            case java.util.Calendar.WEDNESDAY: return "周三";
+            case java.util.Calendar.THURSDAY: return "周四";
+            case java.util.Calendar.FRIDAY: return "周五";
+            case java.util.Calendar.SATURDAY: return "周六";
+            case java.util.Calendar.SUNDAY: return "周日";
+            default: return "";
+        }
+    }
+
 }

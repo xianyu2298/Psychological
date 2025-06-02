@@ -40,13 +40,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // 建表语句
     private static final String CREATE_TABLE_USERS =
-            "CREATE TABLE " + TABLE_USERS + " ("
-                    + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                    + COLUMN_USERNAME + " TEXT NOT NULL UNIQUE, "
-                    + COLUMN_PASSWORD + " TEXT NOT NULL, "
-                    + COLUMN_ROLE + " INTEGER NOT NULL,"
-                    + COLUMN_AVATAR + " BLOB"
-                    + ");";
+            "CREATE TABLE " + TABLE_USERS + " (" +
+                    COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    COLUMN_USERNAME + " TEXT NOT NULL UNIQUE, " +
+                    COLUMN_PASSWORD + " TEXT NOT NULL, " +
+                    COLUMN_ROLE + " INTEGER NOT NULL, " +
+                    COLUMN_AVATAR + " BLOB, " +
+                    "expertise TEXT, " +
+                    "available_time TEXT" +
+                    ");";
 
     private static final String CREATE_TABLE_APPOINTMENTS =
             "CREATE TABLE " + TABLE_APPOINTMENTS + " (" +
@@ -158,22 +160,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_USERS,
-                new String[]{COLUMN_USERNAME, COLUMN_AVATAR},
+                new String[]{COLUMN_USERNAME, COLUMN_AVATAR, "expertise", "available_time"},
                 COLUMN_ROLE + " = ?",
-                new String[]{"1"},  // 1 表示咨询师
+                new String[]{"1"},
                 null, null, null);
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 String name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_USERNAME));
                 byte[] avatarBytes = cursor.getBlob(cursor.getColumnIndexOrThrow(COLUMN_AVATAR));
-                list.add(new Counselor(name, "擅长：未填写", "时间：待定", avatarBytes));
+                String expertise = cursor.getString(cursor.getColumnIndexOrThrow("expertise"));
+                String available = cursor.getString(cursor.getColumnIndexOrThrow("available_time"));
+
+                if (expertise == null || expertise.isEmpty()) {
+                    expertise = "未填写";
+                }
+                if (available == null || available.isEmpty()) {
+                    available = "待定";
+                }
+
+                list.add(new Counselor(
+                        name,
+                        "" + expertise,//擅长
+                        "" + available,//时间
+                        avatarBytes
+                ));
             } while (cursor.moveToNext());
             cursor.close();
         }
 
         return list;
     }
+
 
     /**
      * 预约方法
@@ -430,6 +448,46 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         return messages;
+    }
+
+
+    public void updateCounselorInfo(String username, String expertise, String availableTime) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("expertise", expertise);
+        values.put("available_time", availableTime);
+        db.update("users", values, "username = ?", new String[]{username});
+        db.close();
+    }
+
+    public String[] getCounselorInfo(String username) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_USERS,
+                new String[]{"expertise", "available_time"},
+                "username = ?",
+                new String[]{username}, null, null, null);
+        String[] result = new String[]{"", ""};
+        if (cursor != null && cursor.moveToFirst()) {
+            result[0] = cursor.getString(0); // expertise
+            result[1] = cursor.getString(1); // available_time
+            cursor.close();
+        }
+        return result;
+    }
+
+    public String getCounselorAvailableTime(String counselorName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query("users",
+                new String[]{"available_time"},
+                "username = ?",
+                new String[]{counselorName},
+                null, null, null);
+        String result = "";
+        if (cursor != null && cursor.moveToFirst()) {
+            result = cursor.getString(cursor.getColumnIndexOrThrow("available_time"));
+            cursor.close();
+        }
+        return result;
     }
 
 }

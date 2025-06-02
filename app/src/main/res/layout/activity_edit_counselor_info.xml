@@ -1,0 +1,32 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:padding="24dp">
+
+    <EditText
+        android:id="@+id/etExpertise"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="擅长方向（如：亲子关系、学习焦虑）" />
+
+    <TextView
+        android:id="@+id/tvTimeSelector"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="请选择可预约时间"
+        android:background="@drawable/bg_input"
+        android:padding="12dp"
+        android:layout_marginTop="16dp"
+        android:drawableEnd="@drawable/ic_arrow_drop_down"
+        android:gravity="center_vertical"
+        android:textSize="16sp" />
+
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="保存"
+        android:layout_marginTop="24dp"
+        android:textColor="@android:color/white"/>
+
+</LinearLayout>
