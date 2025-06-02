@@ -142,7 +142,7 @@ public class CounselorHomeActivity extends AppCompatActivity {
             scrollMyProfile.setVisibility(NestedScrollView.VISIBLE);
             showMyProfile();
             return true;
-        } else if (id == R.id.nav_records) {
+        } else if (id == R.id.nav_help) {
             lvAppointments.setVisibility(View.VISIBLE);
             showAppointmentRecords();
             return true;
