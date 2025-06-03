@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.aaa.psychological.R;
 import com.aaa.psychological.helpers.DatabaseHelper;
+import com.aaa.psychological.models.Appointment;
 
 import java.util.List;
 
@@ -26,8 +27,8 @@ public class AppointmentRecordsActivity extends AppCompatActivity {
         dbHelper = new DatabaseHelper(this);
         lvAppointments = findViewById(R.id.lvAppointments);
 
-        List<String> records = dbHelper.getAppointmentsByUser(username);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, records);
+        List<Appointment> records = dbHelper.getAppointmentsByUser(username);
+        ArrayAdapter<Appointment> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, records);
         lvAppointments.setAdapter(adapter);
     }
 }

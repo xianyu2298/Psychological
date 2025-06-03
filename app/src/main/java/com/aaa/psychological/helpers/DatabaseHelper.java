@@ -228,31 +228,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /*
      * 查询用户的预约记录
-     * @param username 用户名
-     * @return List<String>：每个元素是一条预约记录的字符串表示
      */
-    public List<String> getAppointmentsByUser(String username) {
-        List<String> records = new ArrayList<>();
+    public List<Appointment> getAppointmentsByUser(String username) {
+        List<Appointment> list = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query("appointments",
-                new String[]{"counselor_name", "status", "timestamp"},
+                new String[]{"counselor_name", "status", "timestamp", "counselor_avatar"},
                 "user_name = ?",
                 new String[]{username},
                 null, null, "timestamp DESC");
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                String name = cursor.getString(0);
+                String counselorName = cursor.getString(0);
                 String status = cursor.getString(1);
                 String time = cursor.getString(2);
-                records.add("咨询师：" + name + "\n状态：" + status + "\n时间：" + time);
+                byte[] avatar = cursor.getBlob(3);
+
+                Appointment appt = new Appointment(counselorName, time, status, avatar);
+                list.add(appt);
             } while (cursor.moveToNext());
             cursor.close();
         }
 
-        return records;
+        return list;
     }
+
 
     /**
      * 查询预约记录并返回结构化对象列表（包含头像）
@@ -371,7 +373,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 String time = cursor.getString(2);
                 byte[] avatar = cursor.getBlob(3);
 
-                Appointment appt = new Appointment(username, time, status, avatar); // 使用 user_name 替代 counselorName
+                // 使用第二个构造函数（标记 isUserSide 为 true）
+                Appointment appt = new Appointment(username, time, status, avatar, true);
                 list.add(appt);
             } while (cursor.moveToNext());
             cursor.close();
@@ -379,6 +382,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return list;
     }
+
 
     // 咨询师更新预约状态
     public void updateAppointmentStatus(String userName, String counselorName, String newStatus) {

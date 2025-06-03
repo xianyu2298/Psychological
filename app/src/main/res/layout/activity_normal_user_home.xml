@@ -150,7 +150,7 @@
             android:divider="@android:color/darker_gray"
             android:dividerHeight="1dp"
             android:padding="16dp" />
-
+        <!-- 消息列表视图 -->
         <ListView
             android:id="@+id/lvMessageList"
             android:layout_width="match_parent"

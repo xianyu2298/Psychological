@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.aaa.psychological.R;
 import com.aaa.psychological.adapters.AppointmentAdapter;
 import com.aaa.psychological.adapters.BannerAdapter;
+import com.aaa.psychological.adapters.ChatListAdapter;
 import com.aaa.psychological.adapters.CounselorAdapter;
 import com.aaa.psychological.helpers.DatabaseHelper;
 import com.aaa.psychological.models.Appointment;
@@ -367,9 +368,7 @@ public class NormalUserHomeActivity extends AppCompatActivity {
         lvMessageList.setVisibility(View.VISIBLE);
 
         List<String> counselorNames = dbHelper.getBookedCounselorsForUser(currentUsername);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, counselorNames);
+        ChatListAdapter adapter = new ChatListAdapter(this, counselorNames, currentUsername);
         lvMessageList.setAdapter(adapter);
 
         lvMessageList.setOnItemClickListener((parent, view, position, id) -> {
@@ -379,6 +378,14 @@ public class NormalUserHomeActivity extends AppCompatActivity {
             intent.putExtra("receiver", counselorName);
             startActivity(intent);
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (lvMessageList.getVisibility() == View.VISIBLE) {
+            showMessageList(); // 重新加载消息列表
+        }
     }
 
 

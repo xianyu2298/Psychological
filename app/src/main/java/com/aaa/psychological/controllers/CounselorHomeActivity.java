@@ -24,6 +24,7 @@ import com.aaa.psychological.R;
 import com.aaa.psychological.adapters.AppointmentAdapter;
 import com.aaa.psychological.adapters.AppointmentRecyclerAdapter;
 import com.aaa.psychological.adapters.BannerAdapter;
+import com.aaa.psychological.adapters.ChatListAdapter;
 import com.aaa.psychological.helpers.DatabaseHelper;
 import com.aaa.psychological.models.Appointment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -267,21 +268,21 @@ public class CounselorHomeActivity extends AppCompatActivity {
 
         for (Appointment a : appointments) {
             if ("心理治疗中".equals(a.getStatus())) {
-                activeUsers.add(a.getCounselorName()); // 注意：这个字段是 user_name
+                activeUsers.add(a.getUserName());  // ✅ 正确字段
             }
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, activeUsers);
+        ChatListAdapter adapter = new ChatListAdapter(this, activeUsers, currentUsername);
         lvMessageList.setAdapter(adapter);
 
         lvMessageList.setOnItemClickListener((parent, view, position, id) -> {
             String user = activeUsers.get(position);
             Intent intent = new Intent(CounselorHomeActivity.this, ChatActivity.class);
-            intent.putExtra("sender", currentUsername);  // 咨询师是发送方
-            intent.putExtra("receiver", user);           // 用户是接收方
+            intent.putExtra("sender", currentUsername);  // 咨询师是发送者
+            intent.putExtra("receiver", user);           // 用户是接收者
             startActivity(intent);
         });
     }
+
 
 }

@@ -6,7 +6,8 @@
         android:id="@+id/etExpertise"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="擅长方向（如：亲子关系、学习焦虑）" />
+        android:hint="擅长方向（如：亲子关系、学习焦虑）"
+        android:minHeight="48dp" />
 
     <TextView
         android:id="@+id/tvTimeSelector"
