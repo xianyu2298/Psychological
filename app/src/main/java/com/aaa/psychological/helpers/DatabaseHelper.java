@@ -47,7 +47,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     COLUMN_ROLE + " INTEGER NOT NULL, " +
                     COLUMN_AVATAR + " BLOB, " +
                     "expertise TEXT, " +
-                    "available_time TEXT" +
+                    "available_time TEXT," +
+                    "introduction TEXT"+
                     ");";
 
     private static final String CREATE_TABLE_APPOINTMENTS =
@@ -116,7 +117,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public Cursor getUserByUsername(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String[] columns = {COLUMN_ID, COLUMN_USERNAME, COLUMN_PASSWORD, COLUMN_ROLE, COLUMN_AVATAR};
+        String[] columns = {
+                COLUMN_ID, COLUMN_USERNAME, COLUMN_PASSWORD, COLUMN_ROLE,
+                COLUMN_AVATAR, "expertise", "available_time", "introduction"
+        };
         String selection = COLUMN_USERNAME + " = ?";
         String[] selectionArgs = { username };
 
@@ -130,6 +134,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 null
         );
     }
+
 
     /**
      * 校验用户名/密码是否匹配
@@ -181,7 +186,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                 list.add(new Counselor(
                         name,
-                        "" + expertise,//擅长
+                        "擅长方向:" + expertise,//擅长
                         "" + available,//时间
                         avatarBytes
                 ));
@@ -487,6 +492,44 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cursor.close();
         }
         return result;
+    }
+
+//    public String getCounselorIntroduction(String username) {
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        Cursor cursor = db.rawQuery("SELECT introduction FROM users WHERE username = ?", new String[]{username});
+//        if (cursor != null && cursor.moveToFirst()) {
+//            String intro = cursor.getString(0);
+//            cursor.close();
+//            return intro;
+//        }
+//        return "";
+//    }
+
+    public void updateCounselorIntroduction(String username, String intro) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("introduction", intro);
+        db.update("users", values, "username = ?", new String[]{username});
+    }
+
+    public String getCounselorExpertise(String username) {
+        Cursor cursor = getUserByUsername(username);
+        if (cursor != null && cursor.moveToFirst()) {
+            String result = cursor.getString(cursor.getColumnIndexOrThrow("expertise"));
+            cursor.close();
+            return result;
+        }
+        return null;
+    }
+
+    public String getCounselorIntroduction(String username) {
+        Cursor cursor = getUserByUsername(username);
+        if (cursor != null && cursor.moveToFirst()) {
+            String result = cursor.getString(cursor.getColumnIndexOrThrow("introduction"));
+            cursor.close();
+            return result;
+        }
+        return null;
     }
 
 }

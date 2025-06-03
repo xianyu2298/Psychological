@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#FAF7FD">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- 头像 -->
+        <ImageView
+            android:id="@+id/imgAvatar"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_default_avatar"
+
+            android:layout_marginBottom="16dp" />
+
+        <!-- 用户名 -->
+        <TextView
+            android:id="@+id/tvUsername"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="咨询师名："
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="12dp"
+            android:gravity="center"/>
+
+        <!-- 可预约时间 -->
+        <TextView
+            android:id="@+id/tvAvailableTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="可预约时间："
+            android:textSize="16sp"
+            android:textColor="#555555"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_input"
+            android:padding="12dp"
+            android:layout_marginTop="16dp"
+            android:minHeight="48dp"/>
+
+        <!-- 擅长方向 -->
+        <TextView
+            android:id="@+id/tvExpertise"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="擅长方向："
+            android:textSize="16sp"
+            android:textColor="#555555"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_input"
+            android:padding="12dp"
+            android:layout_marginTop="16dp"
+            android:minHeight="48dp"/>
+
+        <!-- 简介 -->
+        <TextView
+            android:id="@+id/tvIntro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="简介："
+            android:textSize="16sp"
+            android:textColor="#555555"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/bg_input"
+            android:padding="12dp"
+            android:layout_marginTop="16dp"
+            android:minHeight="48dp"/>
+
+        <!-- 返回按钮 -->
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="返回"
+            android:backgroundTint="@color/blue"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+</ScrollView>

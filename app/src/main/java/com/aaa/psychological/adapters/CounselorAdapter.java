@@ -1,6 +1,7 @@
 package com.aaa.psychological.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.aaa.psychological.R;
+import com.aaa.psychological.controllers.CounselorDetailActivity;
 import com.aaa.psychological.helpers.DatabaseHelper;
 import com.aaa.psychological.models.Counselor;
 
@@ -93,6 +95,12 @@ public class CounselorAdapter extends RecyclerView.Adapter<CounselorAdapter.View
                 }
             }
         });
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, CounselorDetailActivity.class);
+            intent.putExtra("username", c.getName()); // 咨询师用户名
+            context.startActivity(intent);
+        });
+
 
     }
 

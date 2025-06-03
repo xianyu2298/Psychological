@@ -7,7 +7,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="擅长方向（如：亲子关系、学习焦虑）"
+        android:background="@drawable/bg_input"
+        android:padding="12dp"
+        android:layout_marginTop="16dp"
         android:minHeight="48dp" />
+
+    <EditText
+        android:id="@+id/etIntroduction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="填写您的个人简介"
+        android:minLines="3"
+        android:maxLines="5"
+        android:gravity="top|start"
+        android:background="@drawable/bg_input"
+        android:padding="12dp"
+        android:layout_marginTop="16dp"
+        />
+
 
     <TextView
         android:id="@+id/tvTimeSelector"

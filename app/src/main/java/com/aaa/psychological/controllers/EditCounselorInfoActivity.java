@@ -23,18 +23,26 @@ public class EditCounselorInfoActivity extends AppCompatActivity {
     private Button btnSave;
     private DatabaseHelper dbHelper;
     private String username;
+    private EditText etIntroduction;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_counselor_info);
+
+        dbHelper = new DatabaseHelper(this);
+
+        username = getIntent().getStringExtra("username");
+
+        etIntroduction = findViewById(R.id.etIntroduction);
+        String intro = dbHelper.getCounselorIntroduction(username);
+        etIntroduction.setText(intro);
 
         etExpertise = findViewById(R.id.etExpertise);
         tvTimeSelector = findViewById(R.id.tvTimeSelector);
         btnSave = findViewById(R.id.btnSave);
-
-        dbHelper = new DatabaseHelper(this);
-        username = getIntent().getStringExtra("username");
 
         // 读取数据库中已有的擅长方向和可预约时间
         String[] info = dbHelper.getCounselorInfo(username);
@@ -46,12 +54,17 @@ public class EditCounselorInfoActivity extends AppCompatActivity {
 
         // 保存按钮
         btnSave.setOnClickListener(v -> {
-            String expertise = etExpertise.getText().toString().trim();
-            String time = tvTimeSelector.getText().toString().trim();
-            dbHelper.updateCounselorInfo(username, expertise, time);
+            String e = etExpertise.getText().toString();
+            String t = tvTimeSelector.getText().toString();
+            String i = etIntroduction.getText().toString();
+
+            dbHelper.updateCounselorInfo(username, e, t);
+            dbHelper.updateCounselorIntroduction(username, i);
+
             Toast.makeText(this, "信息已保存", Toast.LENGTH_SHORT).show();
             finish();
         });
+
     }
 
     private void showTimePickerDialog() {
