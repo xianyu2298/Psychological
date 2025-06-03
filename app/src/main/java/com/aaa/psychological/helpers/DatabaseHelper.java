@@ -398,11 +398,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // 咨询师更新预约状态
     public void updateAppointmentStatus(String userName, String counselorName, String newStatus) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put("status", newStatus);
-        db.update("appointments", values, "user_name = ? AND counselor_name = ?", new String[]{userName, counselorName});
-        db.close();
+
+        // 获取当前最新一条记录的状态
+        Cursor cursor = db.rawQuery(
+                "SELECT id, status FROM appointments WHERE user_name = ? AND counselor_name = ? ORDER BY id DESC LIMIT 1",
+                new String[]{userName, counselorName});
+
+        if (cursor != null && cursor.moveToFirst()) {
+            String currentStatus = cursor.getString(cursor.getColumnIndexOrThrow("status"));
+            int latestId = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+
+            cursor.close();
+
+            // 如果状态已经是目标状态，则不更新，避免重复治疗
+            if (newStatus.equals(currentStatus)) {
+                return;
+            }
+
+            // 执行更新：只更新最新一条记录
+            ContentValues values = new ContentValues();
+            values.put("status", newStatus);
+            db.update("appointments", values, "id = ?", new String[]{String.valueOf(latestId)});
+        } else if (cursor != null) {
+            cursor.close();
+        }
     }
+
 
     //普通用户取消预约
     public void deleteAppointment(String username, String counselorName) {

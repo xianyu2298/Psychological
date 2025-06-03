@@ -236,10 +236,19 @@ public class CounselorHomeActivity extends AppCompatActivity {
         btnCancel.setOnClickListener(v -> dialog.dismiss());
 
         btnTreat.setOnClickListener(v -> {
+            // 获取当前状态，防止重复治疗
+            if ("心理治疗中".equals(appt.getStatus())) {
+                Toast.makeText(CounselorHomeActivity.this, "该用户已在治疗中", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+                return;
+            }
+
             dbHelper.updateAppointmentStatus(appt.getName(), currentUsername, "心理治疗中");
             loadAppointmentsForCounselor();
+            Toast.makeText(CounselorHomeActivity.this, "已开始治疗", Toast.LENGTH_SHORT).show();
             dialog.dismiss();
         });
+
 
         dialog.show();
     }
