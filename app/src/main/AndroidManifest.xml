@@ -27,7 +27,7 @@
         <activity android:name=".controllers.EditCounselorInfoActivity" />
         <activity android:name=".controllers.CounselorDetailActivity" />
         <activity android:name=".controllers.FeedbackActivity" />
-
+        <activity android:name=".controllers.ViewFeedbacksActivity" />
 
     </application>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />

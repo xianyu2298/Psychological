@@ -41,7 +41,7 @@ public class CounselorHomeActivity extends AppCompatActivity {
 
     private LinearLayout layoutCounselorList;
     private RecyclerView rvCounselorList;
-    private TextView tvEmptyPlaceholder, btnFeedback;
+    private TextView tvEmptyPlaceholder, btnFeedback,btnViewFeedback;
     private BottomNavigationView bottomNav;
 
     private NestedScrollView scrollMyProfile;
@@ -129,6 +129,14 @@ public class CounselorHomeActivity extends AppCompatActivity {
             intent.putExtra("username", currentUsername);
             startActivity(intent);
         });
+
+        btnViewFeedback = findViewById(R.id.btnViewFeedback);  // 新增按钮
+        btnViewFeedback.setOnClickListener(v -> {
+            Intent intent = new Intent(CounselorHomeActivity.this, ViewFeedbacksActivity.class);
+            intent.putExtra("username", currentUsername);
+            startActivity(intent);
+        });
+
     }
 
     private boolean onBottomNavSelected(@NonNull MenuItem item) {

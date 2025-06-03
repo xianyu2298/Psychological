@@ -235,6 +235,13 @@
                             style="@style/ProfileItemStyle"
                             android:text="修改其他信息"
                             android:gravity="center"/>
+
+                        <TextView
+                            android:id="@+id/btnViewFeedback"
+                            style="@style/ProfileItemStyle"
+                            android:text="查看评价"
+                            android:gravity="center"/>
+
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 

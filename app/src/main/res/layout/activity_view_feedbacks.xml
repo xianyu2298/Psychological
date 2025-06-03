@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:ignore="VisualLintBounds">
+
+    <!--  Toolbar 标题栏 -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/viewFeedbackToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#000000"
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
+        app:title="我的评价"
+        app:titleTextColor="@android:color/white"/>
+
+    <!--  主体内容 -->
+    <LinearLayout
+        android:id="@+id/layoutFeedbackList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp" />
+
+</LinearLayout>
