@@ -294,4 +294,11 @@ public class CounselorHomeActivity extends AppCompatActivity {
     }
 
 
+    protected void onResume() {
+        super.onResume();
+        if (lvMessageList.getVisibility() == View.VISIBLE) {
+            showMessageList(); // 重新加载消息列表
+        }
+    }
+
 }
