@@ -45,7 +45,7 @@ public class AppointmentAdapter extends ArrayAdapter<Appointment> {
         TextView tvTime = convertView.findViewById(R.id.tvAppointmentTime);
         TextView tvStatus = convertView.findViewById(R.id.tvStatus);
 
-        tvName.setText(appt.getCounselorName());
+        tvName.setText(appt.getName());
         tvTime.setText("预约时间：" + appt.getTime());
         tvStatus.setText(appt.getStatus());
 

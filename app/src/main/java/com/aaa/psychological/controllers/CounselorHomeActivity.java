@@ -214,7 +214,7 @@ public class CounselorHomeActivity extends AppCompatActivity {
         Button btnCancel = dialogView.findViewById(R.id.btnCancel);
         Button btnTreat = dialogView.findViewById(R.id.btnTreat);
 
-        tvName.setText("用户名：" + appt.getCounselorName());
+        tvName.setText("预约人：" + appt.getName());
         tvTime.setText("预约时间：" + appt.getTime());
         if (appt.getAvatarBytes() != null) {
             Bitmap bmp = BitmapFactory.decodeByteArray(appt.getAvatarBytes(), 0, appt.getAvatarBytes().length);
@@ -230,7 +230,7 @@ public class CounselorHomeActivity extends AppCompatActivity {
         btnCancel.setOnClickListener(v -> dialog.dismiss());
 
         btnTreat.setOnClickListener(v -> {
-            dbHelper.updateAppointmentStatus(appt.getCounselorName(), currentUsername, "心理治疗中");
+            dbHelper.updateAppointmentStatus(appt.getName(), currentUsername, "心理治疗中");
             loadAppointmentsForCounselor();
             dialog.dismiss();
         });
@@ -268,7 +268,7 @@ public class CounselorHomeActivity extends AppCompatActivity {
 
         for (Appointment a : appointments) {
             if ("心理治疗中".equals(a.getStatus())) {
-                activeUsers.add(a.getUserName());  // ✅ 正确字段
+                activeUsers.add(a.getName());  //  正确字段
             }
         }
 

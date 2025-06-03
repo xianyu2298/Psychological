@@ -233,27 +233,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Appointment> list = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query("appointments",
-                new String[]{"counselor_name", "status", "timestamp", "counselor_avatar"},
-                "user_name = ?",
-                new String[]{username},
-                null, null, "timestamp DESC");
+        String query = "SELECT a.counselor_name, a.status, a.timestamp, a.counselor_avatar " +
+                "FROM appointments a " +
+                "WHERE a.user_name = ? " +
+                "ORDER BY a.timestamp DESC";
 
+        Cursor cursor = db.rawQuery(query, new String[]{username});
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                String counselorName = cursor.getString(0);
+                String name = cursor.getString(0);
                 String status = cursor.getString(1);
                 String time = cursor.getString(2);
                 byte[] avatar = cursor.getBlob(3);
 
-                Appointment appt = new Appointment(counselorName, time, status, avatar);
-                list.add(appt);
+                list.add(new Appointment(name, time, status, avatar));
             } while (cursor.moveToNext());
             cursor.close();
         }
-
         return list;
     }
+
 
 
     /**
@@ -361,25 +360,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String query = "SELECT a.user_name, a.status, a.timestamp, a.user_avatar " +
                 "FROM appointments a " +
-                "LEFT JOIN users u ON a.user_name = u.username " +
                 "WHERE a.counselor_name = ? " +
                 "ORDER BY a.timestamp DESC";
 
         Cursor cursor = db.rawQuery(query, new String[]{counselorName});
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                String username = cursor.getString(0);
+                String name = cursor.getString(0);
                 String status = cursor.getString(1);
                 String time = cursor.getString(2);
                 byte[] avatar = cursor.getBlob(3);
 
-                // 使用第二个构造函数（标记 isUserSide 为 true）
-                Appointment appt = new Appointment(username, time, status, avatar, true);
-                list.add(appt);
+                list.add(new Appointment(name, time, status, avatar));
             } while (cursor.moveToNext());
             cursor.close();
         }
-
         return list;
     }
 

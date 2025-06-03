@@ -50,7 +50,7 @@ public class AppointmentRecyclerAdapter extends RecyclerView.Adapter<Appointment
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Appointment appt = appointmentList.get(position);
-        holder.tvUserName.setText("用户名：" + appt.getCounselorName());
+        holder.tvUserName.setText("预约人：" + appt.getName());
         holder.tvTime.setText("预约时间：" + appt.getTime());
 
         String status = appt.getStatus();
