@@ -233,7 +233,7 @@
                         <TextView
                             android:id="@+id/btnFeedback"
                             style="@style/ProfileItemStyle"
-                            android:text="反馈给咨询师"
+                            android:text="修改其他信息"
                             android:gravity="center"/>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>

@@ -26,6 +26,8 @@
         <activity android:name=".controllers.ChatActivity" />
         <activity android:name=".controllers.EditCounselorInfoActivity" />
         <activity android:name=".controllers.CounselorDetailActivity" />
+        <activity android:name=".controllers.FeedbackActivity" />
+
 
     </application>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />

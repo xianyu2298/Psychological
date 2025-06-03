@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 
 import com.aaa.psychological.models.Appointment;
 import com.aaa.psychological.models.Counselor;
+import com.aaa.psychological.models.FeedbackItem;
 import com.aaa.psychological.models.Message;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // 数据库名称和版本
     private static final String DATABASE_NAME = "psychological_db.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // 表名
     public static final String TABLE_USERS = "users";
@@ -36,6 +37,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String TABLE_APPOINTMENTS = "appointments";
 
+    private static final String TABLE_FEEDBACK = "feedbacks";
 
 
     // 建表语句
@@ -62,6 +64,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "user_avatar BLOB" +
                     ");";
 
+    private static final String CREATE_TABLE_FEEDBACK =
+            "CREATE TABLE feedbacks (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "user_name TEXT NOT NULL, " +
+                    "counselor_name TEXT NOT NULL, " +
+                    "content TEXT NOT NULL, " +
+                    "timestamp TEXT NOT NULL)";
 
     public DatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -72,7 +81,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // 创建用户表
         db.execSQL(CREATE_TABLE_USERS);
         db.execSQL(CREATE_TABLE_APPOINTMENTS);
-
+        db.execSQL(CREATE_TABLE_FEEDBACK);
         db.execSQL("CREATE TABLE IF NOT EXISTS messages (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 "sender TEXT NOT NULL, " +
@@ -85,8 +94,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // 如果需要升级，先删除旧表，然后创建新表
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_APPOINTMENTS);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_APPOINTMENTS);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FEEDBACK);
         onCreate(db);
     }
 
@@ -494,17 +504,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
-//    public String getCounselorIntroduction(String username) {
-//        SQLiteDatabase db = this.getReadableDatabase();
-//        Cursor cursor = db.rawQuery("SELECT introduction FROM users WHERE username = ?", new String[]{username});
-//        if (cursor != null && cursor.moveToFirst()) {
-//            String intro = cursor.getString(0);
-//            cursor.close();
-//            return intro;
-//        }
-//        return "";
-//    }
-
     public void updateCounselorIntroduction(String username, String intro) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -531,5 +530,63 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return null;
     }
+
+    public void insertFeedback(String userName, String counselorName, String content, String timestamp) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("user_name", userName);
+        values.put("counselor_name", counselorName);
+        values.put("content", content);
+        values.put("timestamp", timestamp);
+        db.insert("feedbacks", null, values);
+    }
+
+    public List<String> getFeedbacksForCounselor(String counselorName) {
+        List<String> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(
+                "SELECT user_name, content, timestamp FROM feedbacks WHERE counselor_name = ? ORDER BY timestamp DESC",
+                new String[]{counselorName});
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                String user = cursor.getString(0);
+                String content = cursor.getString(1);
+                String time = cursor.getString(2);
+                list.add(user + "：" + content + "\n时间：" + time);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+
+        return list;
+    }
+
+    public List<FeedbackItem> getFeedbackItemsForCounselor(String counselorName) {
+        List<FeedbackItem> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT f.user_name, f.content, f.timestamp, u.avatar " +
+                "FROM feedbacks f " +
+                "LEFT JOIN users u ON f.user_name = u.username " +
+                "WHERE f.counselor_name = ? ORDER BY f.timestamp DESC";
+
+        Cursor cursor = db.rawQuery(query, new String[]{counselorName});
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                String user = cursor.getString(0);
+                String content = cursor.getString(1);
+                String time = cursor.getString(2);
+                byte[] avatar = cursor.getBlob(3);
+                list.add(new FeedbackItem(user, content, time, avatar));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+
+        return list;
+    }
+
+
+
 
 }

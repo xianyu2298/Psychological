@@ -187,9 +187,11 @@ public class NormalUserHomeActivity extends AppCompatActivity {
         });//修改密码
 
         btnFeedback.setOnClickListener(v -> {
-            Toast.makeText(this, "点击反馈给咨询师", Toast.LENGTH_SHORT).show();
-            // TODO: 跳转选择咨询师并提交反馈
-        });
+            Intent intent = new Intent(NormalUserHomeActivity.this, FeedbackActivity.class);
+            intent.putExtra("username", currentUsername);
+            startActivity(intent);
+        });//反馈评价页面
+
 
 
         currentUsername = getIntent().getStringExtra("username");
