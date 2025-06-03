@@ -31,6 +31,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class CounselorHomeActivity extends AppCompatActivity {
@@ -163,23 +164,32 @@ public class CounselorHomeActivity extends AppCompatActivity {
     }
 
     private void loadAppointmentsForCounselor() {
-        List<Appointment> appointments = dbHelper.getAppointmentsByCounselor(currentUsername);
+        List<Appointment> all = dbHelper.getAppointmentsByCounselor(currentUsername);
 
-        if (appointments.isEmpty()) {
-            tvEmptyPlaceholder.setVisibility(TextView.VISIBLE);
-            rvCounselorList.setVisibility(RecyclerView.GONE);
-        } else {
-            tvEmptyPlaceholder.setVisibility(TextView.GONE);
-            rvCounselorList.setVisibility(RecyclerView.VISIBLE);
-            AppointmentRecyclerAdapter adapter = new AppointmentRecyclerAdapter(this, appointments);
-            rvCounselorList.setAdapter(adapter);
+        // 按用户名去重，保留状态为“预约”和“心理治疗中”的最新记录
+        LinkedHashMap<String, Appointment> uniqueMap = new LinkedHashMap<>();
+        for (Appointment a : all) {
+            if ("已预约".equals(a.getStatus())||"心理治疗中".equals(a.getStatus())) {
+                if (!uniqueMap.containsKey(a.getName())) {
+                    uniqueMap.put(a.getName(), a);  // 保留首个“预约”和“心理治疗中”状态的记录
+                }
+            }
         }
 
-        AppointmentRecyclerAdapter adapter = new AppointmentRecyclerAdapter(this, appointments);
-        adapter.setOnItemClickListener(appt -> showAppointmentDialog(appt));
-        rvCounselorList.setAdapter(adapter);
+        List<Appointment> displayList = new ArrayList<>(uniqueMap.values());
 
+        if (displayList.isEmpty()) {
+            tvEmptyPlaceholder.setVisibility(View.VISIBLE);
+            rvCounselorList.setVisibility(View.GONE);
+        } else {
+            tvEmptyPlaceholder.setVisibility(View.GONE);
+            rvCounselorList.setVisibility(View.VISIBLE);
+            AppointmentRecyclerAdapter adapter = new AppointmentRecyclerAdapter(this, displayList);
+            adapter.setOnItemClickListener(appt -> showAppointmentDialog(appt));
+            rvCounselorList.setAdapter(adapter);
+        }
     }
+
 
     private void showMyProfile() {
         tvUsernameProfile.setText("用户名：" + currentUsername);
