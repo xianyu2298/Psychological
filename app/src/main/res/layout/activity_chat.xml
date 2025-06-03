@@ -3,6 +3,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <!-- Toolbar 头部 -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/chatToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/blue"
+        android:titleTextColor="@android:color/white" />
     <ListView
         android:id="@+id/lvMessages"
         android:layout_width="match_parent"

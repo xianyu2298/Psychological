@@ -140,7 +140,7 @@
                 android:orientation="vertical"
                 android:gravity="center_horizontal"
                 android:padding="24dp"
-                android:background="#F9F9FB">
+                >
 
                 <!-- 头像 -->
                 <ImageView

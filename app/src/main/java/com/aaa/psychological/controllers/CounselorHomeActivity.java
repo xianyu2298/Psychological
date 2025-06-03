@@ -267,7 +267,7 @@ public class CounselorHomeActivity extends AppCompatActivity {
         List<String> activeUsers = new ArrayList<>();
 
         for (Appointment a : appointments) {
-            if ("心理治疗中".equals(a.getStatus())) {
+            if ("心理治疗中".equals(a.getStatus())|| "已完成".equals(a.getStatus())) {
                 activeUsers.add(a.getName());  //  正确字段
             }
         }
@@ -280,6 +280,7 @@ public class CounselorHomeActivity extends AppCompatActivity {
             Intent intent = new Intent(CounselorHomeActivity.this, ChatActivity.class);
             intent.putExtra("sender", currentUsername);  // 咨询师是发送者
             intent.putExtra("receiver", user);           // 用户是接收者
+            intent.putExtra("isCounselor", true);
             startActivity(intent);
         });
     }

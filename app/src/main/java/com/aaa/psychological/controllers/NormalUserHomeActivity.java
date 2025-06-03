@@ -376,6 +376,7 @@ public class NormalUserHomeActivity extends AppCompatActivity {
             Intent intent = new Intent(NormalUserHomeActivity.this, ChatActivity.class);
             intent.putExtra("sender", currentUsername);
             intent.putExtra("receiver", counselorName);
+            intent.putExtra("isCounselor", false);
             startActivity(intent);
         });
     }

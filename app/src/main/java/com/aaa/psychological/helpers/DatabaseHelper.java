@@ -113,7 +113,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * 根据用户名查询用户信息
      * @param username 要查询的用户名
-     * @return Cursor：包含列（id, username, password, role），如果用户名不存在，则 cursor.getCount() == 0
+     * @return Cursor：包含列（id, username, password, role...），如果用户名不存在，则 cursor.getCount() == 0
      */
     public Cursor getUserByUsername(String username) {
         SQLiteDatabase db = this.getReadableDatabase();

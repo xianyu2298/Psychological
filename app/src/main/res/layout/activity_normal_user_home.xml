@@ -167,7 +167,8 @@
             android:layout_height="match_parent"
             android:padding="24dp"
             android:visibility="gone"
-            android:fillViewport="true">
+            android:fillViewport="true"
+            android:background="@color/white">
 
             <LinearLayout
                 android:id="@+id/layoutMyProfile"
@@ -175,8 +176,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="center_horizontal"
-                android:padding="24dp"
-                android:background="#F9F9FB">
+                android:padding="24dp">
 
                 <!-- 头像 -->
                 <ImageView
