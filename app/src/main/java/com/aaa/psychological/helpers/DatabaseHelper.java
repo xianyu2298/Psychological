@@ -233,13 +233,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query("appointments",
                 new String[]{"id"},
-                "user_name = ? AND counselor_name = ?",
-                new String[]{username, counselorName},
+                "user_name = ? AND counselor_name = ? AND status != ?",
+                new String[]{username, counselorName, "已完成"},
                 null, null, null);
         boolean exists = (cursor != null && cursor.moveToFirst());
         if (cursor != null) cursor.close();
         return exists;
     }
+
 
     /*
      * 查询用户的预约记录

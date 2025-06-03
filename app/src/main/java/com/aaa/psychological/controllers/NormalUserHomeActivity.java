@@ -388,6 +388,7 @@ public class NormalUserHomeActivity extends AppCompatActivity {
         super.onResume();
         if (lvMessageList.getVisibility() == View.VISIBLE) {
             showMessageList(); // 重新加载消息列表
+            loadCounselorList();
         }
     }
 

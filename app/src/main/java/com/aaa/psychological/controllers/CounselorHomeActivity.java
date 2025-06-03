@@ -211,8 +211,6 @@ public class CounselorHomeActivity extends AppCompatActivity {
     }
 
     private void showAppointmentDialog(Appointment appt) {
-
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_user_detail, null);
 

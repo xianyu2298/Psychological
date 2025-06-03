@@ -1,9 +1,16 @@
 package com.aaa.psychological.controllers;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -54,28 +61,50 @@ public class FeedbackActivity extends AppCompatActivity {
 
         lvCounselors.setOnItemClickListener((parent, view, position, id) -> {
             FeedbackTarget selected = list.get(position);
-            showFeedbackDialog(selected.getCounselorName());
+            showFeedbackDialog(selected);
         });
     }
 
-    private void showFeedbackDialog(String counselorName) {
+    private void showFeedbackDialog(FeedbackTarget target) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("给" + counselorName+"评价");
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_feedback_input, null);
 
-        final EditText input = new EditText(this);
-        input.setHint("写下你的反馈...");
-        input.setMinLines(3);
-        builder.setView(input);
+        ImageView avatar = view.findViewById(R.id.imgCounselorAvatar);
+        TextView tvName = view.findViewById(R.id.tvCounselorName);
+        EditText etFeedback = view.findViewById(R.id.etFeedbackInput);
+        Button btnCancel = view.findViewById(R.id.btnCancel);
+        Button btnConfirm = view.findViewById(R.id.btnConfirm);
 
-        builder.setPositiveButton("确定", (dialog, which) -> {
-            String comment = input.getText().toString().trim();
-            String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
-            dbHelper.insertFeedback(currentUsername, counselorName, comment, timestamp);
-            Toast.makeText(this, "评价已提交", Toast.LENGTH_SHORT).show();
+        // 填充内容
+        tvName.setText("咨询师：" + target.getCounselorName());
+        if (target.getAvatarBytes() != null) {
+            Bitmap bmp = BitmapFactory.decodeByteArray(target.getAvatarBytes(), 0, target.getAvatarBytes().length);
+            avatar.setImageBitmap(bmp);
+        }
+
+        // 构造 AlertDialog
+        AlertDialog dialog = builder.setView(view).create();
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
+
+        // 按钮逻辑
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        btnConfirm.setOnClickListener(v -> {
+            String comment = etFeedback.getText().toString().trim();
+            if (!comment.isEmpty()) {
+                String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+                dbHelper.insertFeedback(currentUsername, target.getCounselorName(), comment, timestamp);
+                Toast.makeText(this, "评价已提交", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            } else {
+                Toast.makeText(this, "请输入评价内容", Toast.LENGTH_SHORT).show();
+            }
         });
 
-        builder.setNegativeButton("取消", (dialog, which) -> dialog.dismiss());
-        builder.show();
+        dialog.show();
     }
+
 }
 

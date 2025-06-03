@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="@drawable/bg_dialog_card"
+    android:gravity="center_horizontal">
+
+    <!-- 头像 -->
+    <ImageView
+        android:id="@+id/imgCounselorAvatar"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_default_avatar"
+        android:scaleType="centerCrop"
+        android:background="@drawable/bg_avatar_circle"
+        android:layout_marginBottom="12dp" />
+
+    <!-- 用户名 -->
+    <TextView
+        android:id="@+id/tvCounselorName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="咨询师：张老师"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="#333333"
+        android:layout_marginBottom="12dp"/>
+
+    <!-- 输入框 -->
+    <EditText
+        android:id="@+id/etFeedbackInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minLines="3"
+        android:hint="写下你的反馈..."
+        android:background="@drawable/bg_input"
+        android:padding="12dp"
+        android:textColor="#000000"
+        android:textColorHint="#888888"
+        android:layout_marginBottom="16dp" />
+
+    <!-- 按钮区域 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="取消"
+            android:background="@drawable/bg_button_book"
+            android:textColor="@color/white"
+            android:padding="8dp"/>
+
+        <Button
+            android:id="@+id/btnConfirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="确定"
+            android:background="@drawable/bg_button_book"
+            android:textColor="@color/white"
+            android:padding="8dp"/>
+    </LinearLayout>
+</LinearLayout>
