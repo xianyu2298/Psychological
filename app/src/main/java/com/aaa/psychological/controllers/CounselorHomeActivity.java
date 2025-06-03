@@ -269,27 +269,22 @@ public class CounselorHomeActivity extends AppCompatActivity {
     private void showMessageList() {
         lvMessageList.setVisibility(View.VISIBLE);
 
-        List<Appointment> appointments = dbHelper.getAppointmentsByCounselor(currentUsername);
-        List<String> activeUsers = new ArrayList<>();
+        // 使用去重后的用户列表
+        List<String> uniqueUsers = dbHelper.getUniqueBookedUsersForCounselor(currentUsername);
 
-        for (Appointment a : appointments) {
-            if ("心理治疗中".equals(a.getStatus())|| "已完成".equals(a.getStatus())) {
-                activeUsers.add(a.getName());  //  正确字段
-            }
-        }
-
-        ChatListAdapter adapter = new ChatListAdapter(this, activeUsers, currentUsername);
+        ChatListAdapter adapter = new ChatListAdapter(this, uniqueUsers, currentUsername);
         lvMessageList.setAdapter(adapter);
 
         lvMessageList.setOnItemClickListener((parent, view, position, id) -> {
-            String user = activeUsers.get(position);
+            String user = uniqueUsers.get(position);
             Intent intent = new Intent(CounselorHomeActivity.this, ChatActivity.class);
-            intent.putExtra("sender", currentUsername);  // 咨询师是发送者
-            intent.putExtra("receiver", user);           // 用户是接收者
+            intent.putExtra("sender", currentUsername);
+            intent.putExtra("receiver", user);
             intent.putExtra("isCounselor", true);
             startActivity(intent);
         });
     }
+
 
 
     protected void onResume() {

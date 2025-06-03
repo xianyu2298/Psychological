@@ -252,6 +252,23 @@ public class NormalUserHomeActivity extends AppCompatActivity {
 
         // 5. 第一次默认加载咨询师列表
         loadCounselorList();
+        //搜索咨询师
+        EditText etSearch = findViewById(R.id.etSearch);
+        ImageView imgSearch = findViewById(R.id.imgSearchIcon);  // 你已有的图标ID
+
+        imgSearch.setOnClickListener(v -> {
+            String keyword = etSearch.getText().toString().trim();
+            if (!keyword.isEmpty()) {
+                List<Counselor> result = dbHelper.searchCounselorsByName(keyword);
+                counselorList.clear();
+                counselorList.addAll(result);
+                counselorAdapter.notifyDataSetChanged();
+            } else {
+                // 关键词为空则重新加载全部
+                loadCounselorList();
+            }
+        });
+
     }
 
     /**

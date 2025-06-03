@@ -9,7 +9,7 @@
     <item
         android:id="@+id/nav_help"
         android:icon="@drawable/ic_help"
-        android:title="治疗中" />
+        android:title="治疗记录" />
 
     <item
         android:id="@+id/nav_messages"

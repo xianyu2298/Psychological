@@ -587,6 +587,55 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return list;
     }
 
+    public List<String> getUniqueBookedUsersForCounselor(String counselorName) {
+        List<String> users = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(
+                "SELECT DISTINCT user_name FROM appointments " +
+                        "WHERE counselor_name = ? AND (status = '心理治疗中' OR status = '已完成')",
+                new String[]{counselorName}
+        );
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                users.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+
+        return users;
+    }
+
+    public List<Counselor> searchCounselorsByName(String keyword) {
+        List<Counselor> result = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM users WHERE role = 1 AND username LIKE ?",
+                new String[]{"%" + keyword + "%"});
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                String name = cursor.getString(cursor.getColumnIndexOrThrow("username"));
+                String available = getCounselorAvailableTime(name);
+                String expertise = getCounselorExpertise(name);
+                byte[] avatar = cursor.getBlob(cursor.getColumnIndexOrThrow("avatar"));
+
+                // 设置默认值，保证前端显示格式一致
+                if (available == null || available.trim().isEmpty()) {
+                    available = "待定";
+                }
+                if (expertise == null || expertise.trim().isEmpty()) {
+                    expertise = "未填写";
+                }
+
+                result.add(new Counselor(name, expertise, available, avatar));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+
+        return result;
+    }
 
 
 
