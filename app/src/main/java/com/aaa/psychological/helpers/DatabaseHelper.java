@@ -11,6 +11,7 @@ import com.aaa.psychological.models.Appointment;
 import com.aaa.psychological.models.Counselor;
 import com.aaa.psychological.models.FeedbackItem;
 import com.aaa.psychological.models.Message;
+import com.aaa.psychological.models.MyFeedbackItem;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -73,7 +74,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "user_name TEXT NOT NULL, " +
                     "counselor_name TEXT NOT NULL, " +
                     "content TEXT NOT NULL, " +
-                    "timestamp TEXT NOT NULL)";
+                    "timestamp TEXT NOT NULL" +
+                    ")";
 
     public DatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -703,5 +705,46 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));  // 设置为北京时间（UTC+8）
         return sdf.format(new Date());
     }
+
+    public List<MyFeedbackItem> getFeedbacksForUser(String username) {
+        List<MyFeedbackItem> feedbacks = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT counselor_name, content, timestamp FROM feedbacks WHERE user_name = ? ORDER BY timestamp DESC";
+        Cursor cursor = db.rawQuery(query, new String[]{username});
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                String counselorName = cursor.getString(cursor.getColumnIndexOrThrow("counselor_name"));
+                String content = cursor.getString(cursor.getColumnIndexOrThrow("content"));
+                String timestamp = cursor.getString(cursor.getColumnIndexOrThrow("timestamp"));
+
+                // 获取头像，直接从 users 表中获取
+                byte[] avatar = getUserAvatar(username);  // 从 users 表获取头像
+
+                feedbacks.add(new MyFeedbackItem(counselorName, content, timestamp, avatar));  // 添加到列表
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+
+        db.close();
+        return feedbacks;
+    }
+
+    private byte[] getUserAvatar(String username) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT avatar FROM users WHERE username = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{username});
+
+        byte[] avatar = null;
+        if (cursor != null && cursor.moveToFirst()) {
+            avatar = cursor.getBlob(cursor.getColumnIndexOrThrow("avatar"));
+            cursor.close();
+        }
+
+        db.close();
+        return avatar;
+    }
+
 
 }

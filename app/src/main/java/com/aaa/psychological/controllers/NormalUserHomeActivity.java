@@ -76,7 +76,7 @@ public class NormalUserHomeActivity extends AppCompatActivity {
 
     private Button btnLogout;
 
-    private TextView btnChangeAvatar, btnChangeUsername, btnChangePassword, btnFeedback;
+    private TextView btnChangeAvatar, btnChangeUsername, btnChangePassword, btnFeedback,btnLookMyFeedback;
 
     private static final int REQUEST_CODE_PICK_IMAGE = 101;
 
@@ -200,7 +200,13 @@ public class NormalUserHomeActivity extends AppCompatActivity {
             startActivity(intent);
         });//反馈评价页面
 
-
+        //我的评价
+        btnLookMyFeedback = findViewById(R.id.btnLookMyFeedback);
+        btnLookMyFeedback.setOnClickListener(v -> {
+            Intent intent = new Intent(NormalUserHomeActivity.this, ViewMyFeedbackActivity.class);
+            intent.putExtra("username", currentUsername);
+            startActivity(intent);
+        });
 
         currentUsername = getIntent().getStringExtra("username");
         dbHelper = new DatabaseHelper(this);

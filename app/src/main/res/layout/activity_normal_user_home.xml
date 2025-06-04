@@ -283,6 +283,11 @@
                             style="@style/ProfileItemStyle"
                             android:text="给咨询师评价"
                             android:gravity="center"/>
+                        <TextView
+                            android:id="@+id/btnLookMyFeedback"
+                            style="@style/ProfileItemStyle"
+                            android:text="查看我的评价"
+                            android:gravity="center"/>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
