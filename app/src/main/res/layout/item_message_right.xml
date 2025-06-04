@@ -2,28 +2,39 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:gravity="end"
     android:padding="8dp">
 
     <TextView
         android:id="@+id/tvMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:background="@drawable/bg_message_right"
         android:textColor="#ffffff"
         android:textSize="16sp"
         android:padding="10dp"
         android:maxWidth="220dp"
-        android:layout_marginEnd="8dp" />
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="5dp"/>
 
-    <ImageView
+<!--    <ImageView-->
+<!--        android:id="@+id/imgAvatar"-->
+<!--        android:layout_width="40dp"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:src="@drawable/ic_default_avatar"-->
+<!--        android:layout_gravity="bottom"-->
+<!--        android:scaleType="centerCrop"-->
+<!--        android:background="@drawable/bg_avatar_circle" />-->
+
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/imgAvatar"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:scaleType="centerCrop"
         android:src="@drawable/ic_default_avatar"
         android:layout_gravity="bottom"
-        android:scaleType="centerCrop"
-        android:background="@drawable/bg_avatar_circle" />
+        app:shapeAppearanceOverlay="@style/RoundedFullImage" />
 </LinearLayout>
 

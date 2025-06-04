@@ -17,21 +17,29 @@
         android:gravity="center_vertical">
 
         <!-- 原有头像 + 信息 + 状态布局保持不变 -->
-        <ImageView
+<!--        <ImageView-->
+<!--            android:id="@+id/imgAvatar"-->
+<!--            android:layout_width="48dp"-->
+<!--            android:layout_height="48dp"-->
+<!--            android:src="@drawable/ic_default_avatar"-->
+<!--            android:scaleType="centerCrop"-->
+<!--            android:background="@drawable/circle_bg"-->
+<!--            android:padding="2dp" />-->
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imgAvatar"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/ic_default_avatar"
             android:scaleType="centerCrop"
-            android:background="@drawable/circle_bg"
-            android:padding="2dp" />
+            android:src="@drawable/ic_default_avatar"
+            android:layout_gravity="center"
+            app:shapeAppearanceOverlay="@style/RoundedFullImage" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:layout_marginStart="12dp">
+            android:layout_marginStart="10dp">
 
             <TextView
                 android:id="@+id/tvCounselorName"

@@ -2,20 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="20dp"
     android:background="@drawable/bg_dialog_card"
     android:gravity="center_horizontal">
 
     <!-- 头像 -->
-    <ImageView
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/imgCounselorAvatar"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:src="@drawable/ic_default_avatar"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="12dp"
         android:scaleType="centerCrop"
-        android:background="@drawable/bg_avatar_circle"
-        android:layout_marginBottom="12dp" />
+        android:src="@drawable/ic_default_avatar"
+        app:shapeAppearanceOverlay="@style/RoundedFullImage" />
 
     <!-- 用户名 -->
     <TextView

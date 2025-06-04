@@ -21,15 +21,27 @@
         android:padding="12dp">
 
         <!-- 咨询师头像 -->
-        <ImageView
+<!--        <ImageView-->
+<!--            android:id="@+id/imgCounselorAvatar"-->
+<!--            android:layout_width="64dp"-->
+<!--            android:layout_height="64dp"-->
+<!--            android:layout_marginEnd="12dp"-->
+<!--            android:background="@drawable/circle_background"-->
+<!--            android:contentDescription="咨询师头像"-->
+<!--            android:scaleType="centerCrop"-->
+<!--            android:src="@drawable/ic_default_avatar"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imgCounselorAvatar"
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:layout_marginEnd="12dp"
-            android:background="@drawable/circle_background"
             android:contentDescription="咨询师头像"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_default_avatar"
+            app:shapeAppearanceOverlay="@style/RoundedFullImage"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -47,7 +59,8 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/btnBook"
             app:layout_constraintStart_toEndOf="@id/imgCounselorAvatar"
-            app:layout_constraintTop_toTopOf="@id/imgCounselorAvatar" />
+            app:layout_constraintTop_toTopOf="@id/imgCounselorAvatar"
+            />
 
         <!-- 简介 -->
         <TextView

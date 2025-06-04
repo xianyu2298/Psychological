@@ -12,20 +12,30 @@
         android:orientation="horizontal"
         android:padding="12dp">
 
-        <ImageView
+<!--        <ImageView-->
+<!--            android:id="@+id/imgUserAvatar"-->
+<!--            android:layout_width="60dp"-->
+<!--            android:layout_height="60dp"-->
+<!--            android:src="@drawable/ic_default_avatar"-->
+<!--            android:scaleType="centerCrop"-->
+<!--            android:layout_marginEnd="12dp"-->
+<!--            android:background="@drawable/bg_avatar_circle"/>-->
+
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imgUserAvatar"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/ic_default_avatar"
             android:scaleType="centerCrop"
-            android:layout_marginEnd="12dp"
-            android:background="@drawable/bg_avatar_circle"/>
+            android:src="@drawable/ic_default_avatar"
+            android:layout_gravity="center"
+            app:shapeAppearanceOverlay="@style/RoundedFullImage" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginStart="10dp">
 
             <TextView
                 android:id="@+id/tvUserName"
@@ -34,7 +44,8 @@
                 android:text="用户名"
                 android:textStyle="bold"
                 android:textSize="16sp"
-                android:textColor="#333333"/>
+                android:textColor="#333333"
+                />
 
             <TextView
                 android:id="@+id/tvFeedbackContent"
@@ -42,7 +53,8 @@
                 android:layout_height="wrap_content"
                 android:text="反馈内容"
                 android:textColor="#555555"
-                android:layout_marginTop="4dp"/>
+                android:layout_marginTop="4dp"
+                />
 
             <TextView
                 android:id="@+id/tvFeedbackTime"
@@ -51,7 +63,8 @@
                 android:text="时间"
                 android:textSize="12sp"
                 android:textColor="#999999"
-                android:layout_marginTop="2dp"/>
+                android:layout_marginTop="2dp"
+                />
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>
