@@ -89,7 +89,7 @@ public class CounselorDetailActivity extends AppCompatActivity {
             String intro = dbHelper.getCounselorIntroduction(counselorUsername);
             byte[] avatar = cursor.getBlob(cursor.getColumnIndexOrThrow("avatar"));
 
-            tvUsername.setText("用户名：" + counselorUsername);
+            tvUsername.setText("咨询师：" + counselorUsername);
             tvAvailableTime.setText("可预约时间：" + (availableTime == null ? "未填写" : availableTime));
             tvExpertise.setText("擅长方向：" + (expertise == null ? "未填写" : expertise));
             tvIntro.setText("简介：" + (intro == null ? "未填写" : intro));

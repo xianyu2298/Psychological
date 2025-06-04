@@ -2,8 +2,10 @@ package com.aaa.psychological.controllers;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -29,6 +31,9 @@ import com.aaa.psychological.helpers.DatabaseHelper;
 import com.aaa.psychological.models.Appointment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -48,6 +53,7 @@ public class CounselorHomeActivity extends AppCompatActivity {
     private NestedScrollView scrollMyProfile;
     private ImageView imgAvatar;
     private TextView tvUsernameProfile, tvAppointmentStatus;
+    private TextView btnChangeUsername,btnChangePassword,btnChangeAvatar;
     private Button btnLogout;
 
     private ListView lvAppointments;
@@ -57,11 +63,13 @@ public class CounselorHomeActivity extends AppCompatActivity {
     private ViewPager2 bannerViewPager;
 
     private ListView lvMessageList;
-
+    private static final int REQUEST_CODE_PICK_IMAGE = 1001; // 请求码
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
 
 
         super.onCreate(savedInstanceState);
@@ -137,6 +145,79 @@ public class CounselorHomeActivity extends AppCompatActivity {
             intent.putExtra("username", currentUsername);
             startActivity(intent);
         });
+
+        btnChangeUsername = findViewById(R.id.btnChangeUsername);  // 初始化修改用户名按钮
+        btnChangePassword = findViewById(R.id.btnChangePassword);  // 初始化修改密码按钮
+        btnChangeAvatar = findViewById(R.id.btnChangeAvatar);  // 初始化修改头像按钮
+
+
+        btnChangeAvatar.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE);
+        });
+        //用户名修改
+        btnChangeUsername.setOnClickListener(v -> {
+            EditText input = new EditText(this);
+            input.setHint("输入新用户名");
+
+            new AlertDialog.Builder(this)
+                    .setTitle("修改用户名")
+                    .setView(input)
+                    .setPositiveButton("确认", (dialog, which) -> {
+                        String newUsername = input.getText().toString().trim();
+                        if (!newUsername.isEmpty()) {
+                            // 更新数据库中的所有相关表格
+                            boolean success = dbHelper.updateUsername(currentUsername, newUsername, getCurrentUserAvatarBytes());
+                            if (success) {
+                                Toast.makeText(this, "用户名已更新", Toast.LENGTH_SHORT).show();
+                                currentUsername = newUsername;
+                                tvUsernameProfile.setText("用户名：" + currentUsername);
+
+                                // 头像同步更新
+                                loadUserProfile();  // 重新加载用户头像等信息
+                            } else {
+                                Toast.makeText(this, "更新失败（可能重名）", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    })
+                    .setNegativeButton("取消", null)
+                    .show();
+        });
+
+        btnChangePassword.setOnClickListener(v -> {
+            LinearLayout layout = new LinearLayout(this);
+            layout.setOrientation(LinearLayout.VERTICAL);
+
+            EditText oldPwd = new EditText(this);
+            oldPwd.setHint("原密码");
+
+            EditText newPwd = new EditText(this);
+            newPwd.setHint("新密码");
+
+            layout.addView(oldPwd);
+            layout.addView(newPwd);
+
+            new AlertDialog.Builder(this)
+                    .setTitle("修改密码")
+                    .setView(layout)
+                    .setPositiveButton("确认", (dialog, which) -> {
+                        String oldP = oldPwd.getText().toString();
+                        String newP = newPwd.getText().toString();
+
+                        // 校验旧密码是否正确
+                        if (dbHelper.checkUserCredentials(currentUsername, oldP) >= 0) {
+                            // 调用 updateUserPassword 方法更新密码
+                            dbHelper.updateUserPassword(currentUsername, newP);
+                            Toast.makeText(this, "密码已更新", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(this, "原密码错误", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .setNegativeButton("取消", null)
+                    .show();
+        });
+
 
     }
 
@@ -312,5 +393,69 @@ public class CounselorHomeActivity extends AppCompatActivity {
             showMessageList(); // 重新加载消息列表
         }
     }
+    // 辅助方法：获取当前用户头像的字节数组
+    private byte[] getCurrentUserAvatarBytes() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = dbHelper.getUserByUsername(currentUsername);  // 获取用户名为 currentUsername 的用户
+        byte[] avatarBytes = null;
+        if (cursor != null && cursor.moveToFirst()) {
+            // 使用 getColumnIndexOrThrow 确保列名正确
+            avatarBytes = cursor.getBlob(cursor.getColumnIndexOrThrow("avatar"));
+            cursor.close();
+        }
+        return avatarBytes;
+    }
+    public void loadUserProfile() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = dbHelper.getUserByUsername(currentUsername);
 
+        if (cursor != null && cursor.moveToFirst()) {
+            // 使用 getColumnIndexOrThrow 确保列名正确
+            String username = cursor.getString(cursor.getColumnIndexOrThrow("username"));
+            byte[] avatarBytes = cursor.getBlob(cursor.getColumnIndexOrThrow("avatar"));
+
+            // 更新头像
+            ImageView imgAvatar = findViewById(R.id.imgAvatar);
+            if (avatarBytes != null) {
+                Bitmap bmp = BitmapFactory.decodeByteArray(avatarBytes, 0, avatarBytes.length);
+                imgAvatar.setImageBitmap(bmp);
+            } else {
+                imgAvatar.setImageResource(R.drawable.ic_default_avatar);  // 默认头像
+            }
+
+            // 更新用户名
+            TextView tvUsername = findViewById(R.id.tvUsernameProfile);
+            tvUsername.setText("用户名：" + username);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_PICK_IMAGE && resultCode == RESULT_OK && data != null) {
+            Uri imageUri = data.getData();
+            try {
+                InputStream inputStream = getContentResolver().openInputStream(imageUri);
+                byte[] imageBytes = getBytes(inputStream);
+                dbHelper.updateUserAvatar(currentUsername, imageBytes);
+
+                Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                imgAvatar.setImageBitmap(bitmap);
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "头像更新失败", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public byte[] getBytes(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+        int bufferSize = 1024;
+        byte[] buffer = new byte[bufferSize];
+        int len;
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteBuffer.write(buffer, 0, len);
+        }
+        return byteBuffer.toByteArray();
+    }
 }
