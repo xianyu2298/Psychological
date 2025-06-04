@@ -1,6 +1,7 @@
 package com.aaa.psychological.controllers;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -145,11 +146,15 @@ public class NormalUserHomeActivity extends AppCompatActivity {
                     .setPositiveButton("确认", (dialog, which) -> {
                         String newUsername = input.getText().toString().trim();
                         if (!newUsername.isEmpty()) {
-                            boolean success = dbHelper.updateUsername(currentUsername, newUsername);
+                            // 更新数据库中的所有相关表格
+                            boolean success = dbHelper.updateUsername(currentUsername, newUsername, getCurrentUserAvatarBytes());
                             if (success) {
                                 Toast.makeText(this, "用户名已更新", Toast.LENGTH_SHORT).show();
                                 currentUsername = newUsername;
                                 tvUsernameProfile.setText("用户名：" + currentUsername);
+
+                                // 头像同步更新
+                                loadUserProfile();  // 重新加载用户头像等信息
                             } else {
                                 Toast.makeText(this, "更新失败（可能重名）", Toast.LENGTH_SHORT).show();
                             }
@@ -157,7 +162,10 @@ public class NormalUserHomeActivity extends AppCompatActivity {
                     })
                     .setNegativeButton("取消", null)
                     .show();
-        });//修改用户名
+        });
+
+
+
 
         btnChangePassword.setOnClickListener(v -> {
             LinearLayout layout = new LinearLayout(this);
@@ -406,6 +414,44 @@ public class NormalUserHomeActivity extends AppCompatActivity {
         if (lvMessageList.getVisibility() == View.VISIBLE) {
             showMessageList(); // 重新加载消息列表
             loadCounselorList();
+        }
+    }
+
+    // 辅助方法：获取当前用户头像的字节数组
+    private byte[] getCurrentUserAvatarBytes() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = dbHelper.getUserByUsername(currentUsername);
+        byte[] avatarBytes = null;
+        if (cursor != null && cursor.moveToFirst()) {
+            // 使用 getColumnIndexOrThrow 确保列名正确
+            avatarBytes = cursor.getBlob(cursor.getColumnIndexOrThrow("avatar"));
+            cursor.close();
+        }
+        return avatarBytes;
+    }
+
+
+    public void loadUserProfile() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = dbHelper.getUserByUsername(currentUsername);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            // 使用 getColumnIndexOrThrow 确保列名正确
+            String username = cursor.getString(cursor.getColumnIndexOrThrow("username"));
+            byte[] avatarBytes = cursor.getBlob(cursor.getColumnIndexOrThrow("avatar"));
+
+            // 更新头像
+            ImageView imgAvatar = findViewById(R.id.imgAvatar);
+            if (avatarBytes != null) {
+                Bitmap bmp = BitmapFactory.decodeByteArray(avatarBytes, 0, avatarBytes.length);
+                imgAvatar.setImageBitmap(bmp);
+            } else {
+                imgAvatar.setImageResource(R.drawable.ic_default_avatar);  // 默认头像
+            }
+
+            // 更新用户名
+            TextView tvUsername = findViewById(R.id.tvUsernameProfile);
+            tvUsername.setText("用户名：" + username);
         }
     }
 

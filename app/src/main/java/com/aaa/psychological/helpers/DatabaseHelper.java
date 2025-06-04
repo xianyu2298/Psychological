@@ -351,13 +351,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // 更新用户名
-    public boolean updateUsername(String oldUsername, String newUsername) {
+    public boolean updateUsername(String oldUsername, String newUsername, byte[] avatarBytes) {
         SQLiteDatabase db = this.getWritableDatabase();
+
+        // 更新 users 表中的用户名
         ContentValues values = new ContentValues();
         values.put("username", newUsername);
         int affected = db.update("users", values, "username = ?", new String[]{oldUsername});
-        return affected > 0;
+
+        if (affected > 0) {
+            // 更新 appointments 表中的用户名
+            db.execSQL("UPDATE appointments SET user_name = ? WHERE user_name = ?", new String[]{newUsername, oldUsername});
+
+            // 更新 messages 表中的发送者和接收者
+            db.execSQL("UPDATE messages SET sender = ?, receiver = ? WHERE sender = ? OR receiver = ?",
+                    new String[]{newUsername, newUsername, oldUsername, oldUsername});
+
+            // 更新 feedbacks 表中的用户名
+            db.execSQL("UPDATE feedbacks SET user_name = ? WHERE user_name = ?", new String[]{newUsername, oldUsername});
+
+            // 更新头像
+            updateUserAvatar(newUsername, avatarBytes);
+
+            return true;
+        }
+        return false;
     }
+
 
     // 更新用户密码
     public void updateUserPassword(String username, String newPassword) {
