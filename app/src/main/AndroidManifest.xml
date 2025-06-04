@@ -20,15 +20,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".controllers.NormalUserHomeActivity" />
-        <activity android:name=".controllers.CounselorHomeActivity" />
-        <activity android:name=".controllers.AppointmentRecordsActivity" />
-        <activity android:name=".controllers.ChatActivity" />
-        <activity android:name=".controllers.EditCounselorInfoActivity" />
-        <activity android:name=".controllers.CounselorDetailActivity" />
-        <activity android:name=".controllers.FeedbackActivity" />
-        <activity android:name=".controllers.ViewFeedbacksActivity" />
-        <activity android:name=".controllers.ViewMyFeedbackActivity" />
+        <activity android:name=".controllers.NormalUserHomeActivity" android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".controllers.CounselorHomeActivity" android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".controllers.AppointmentRecordsActivity" android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".controllers.ChatActivity" android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".controllers.EditCounselorInfoActivity" android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".controllers.CounselorDetailActivity" android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".controllers.FeedbackActivity" android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".controllers.ViewFeedbacksActivity" android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".controllers.ViewMyFeedbackActivity" android:windowSoftInputMode="adjustResize"/>
 
     </application>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />

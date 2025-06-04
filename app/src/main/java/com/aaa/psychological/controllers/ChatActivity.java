@@ -35,6 +35,8 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+
+
         sender = getIntent().getStringExtra("sender");
         receiver = getIntent().getStringExtra("receiver");
 
@@ -42,7 +44,9 @@ public class ChatActivity extends AppCompatActivity {
         lvMessages = findViewById(R.id.lvMessages);
         etMessage = findViewById(R.id.etMessage);
         btnSend = findViewById(R.id.btnSend);
-
+        // 确保输入框获取焦点时，界面自动滚动
+        etMessage.setFocusableInTouchMode(true);
+        etMessage.requestFocus();
         loadMessages();
 
         btnSend.setOnClickListener(v -> {
@@ -64,7 +68,13 @@ public class ChatActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("与 " + receiver + " 聊天");
         }
-
+        // 设置输入框获取焦点时的行为
+        etMessage.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                // 如果获取焦点，确保滚动到输入框上方
+                lvMessages.smoothScrollToPosition(lvMessages.getCount() - 1);
+            }
+        });
     }
 
     @Override

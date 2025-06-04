@@ -1,47 +1,72 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <!-- Toolbar 头部 -->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/chatToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/blue"
-        android:titleTextColor="@android:color/white" />
-    <ListView
-        android:id="@+id/lvMessages"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:divider="@null"
-        android:dividerHeight="0dp"
-        android:transcriptMode="alwaysScroll"
-        android:stackFromBottom="true" />
-
+    <!-- 主内容区域 -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:orientation="horizontal"
-        android:background="#ffffff">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/etMessage"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+        <!-- Toolbar -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/chatToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/blue"
+            android:titleTextColor="@android:color/white" />
+
+        <!-- 聊天消息区域 -->
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:hint="输入消息..."
-            android:background="@drawable/bg_input"
-            android:padding="8dp"
-            android:minHeight="48dp"/>
+            android:fillViewport="true">
 
-        <Button
-            android:id="@+id/btnSend"
-            android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- 消息列表 -->
+                <ListView
+                    android:id="@+id/lvMessages"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:divider="@null"
+                    android:dividerHeight="0dp"
+                    android:transcriptMode="alwaysScroll"
+                    android:stackFromBottom="true"/>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <!-- 输入区域 -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="发送"/>
-    </LinearLayout>
-</LinearLayout>
+            android:padding="8dp"
+            android:orientation="horizontal"
+            android:background="#ffffff">
 
+            <!-- 输入框 -->
+            <EditText
+                android:id="@+id/etMessage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="输入消息..."
+                android:background="@drawable/bg_input"
+                android:padding="8dp"
+                android:minHeight="48dp"
+                android:inputType="textMultiLine"
+                android:maxLines="5"/>
+
+            <!-- 发送按钮 -->
+            <Button
+                android:id="@+id/btnSend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="发送"/>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
