@@ -95,7 +95,7 @@ public class FeedbackActivity extends AppCompatActivity {
             String comment = etFeedback.getText().toString().trim();
             if (!comment.isEmpty()) {
                 String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
-                dbHelper.insertFeedback(currentUsername, target.getCounselorName(), comment, timestamp);
+                dbHelper.insertFeedback(currentUsername, target.getCounselorName(), comment);
                 Toast.makeText(this, "评价已提交", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             } else {

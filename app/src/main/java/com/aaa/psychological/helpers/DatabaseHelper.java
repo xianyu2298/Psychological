@@ -12,8 +12,11 @@ import com.aaa.psychological.models.Counselor;
 import com.aaa.psychological.models.FeedbackItem;
 import com.aaa.psychological.models.Message;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * SQLiteHelper：管理用户表（users），用于保存用户名、密码、角色类型。
@@ -211,8 +214,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * 预约方法
      */
-    public boolean insertAppointment(String userName, String counselorName, byte[] userAvatar, byte[] counselorAvatar)
-    {
+    public boolean insertAppointment(String userName, String counselorName, byte[] userAvatar, byte[] counselorAvatar) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("user_name", userName);
@@ -220,10 +222,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("status", "已预约");
         values.put("user_avatar", userAvatar);
         values.put("counselor_avatar", counselorAvatar);
+
+        // 获取当前北京时间并插入
+        String beijingTime = getCurrentBeijingTime();  // 获取北京时间
+        values.put("timestamp", beijingTime);  // 将北京时间插入到数据库中
+
         long result = db.insert("appointments", null, values);
         db.close();
         return result != -1;
     }
+
 
 
     /**
@@ -479,9 +487,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("sender", sender);
         values.put("receiver", receiver);
         values.put("content", content);
+
+        // 获取当前北京时间并插入
+        String beijingTime = getCurrentBeijingTime();  // 获取北京时间
+        values.put("timestamp", beijingTime);  // 将北京时间插入到数据库中
+
         db.insert("messages", null, values);
         db.close();
     }
+
 
     // 查询两人之间所有聊天记录（按时间排序）
     public List<Message> getMessagesBetween(String user1, String user2) {
@@ -573,15 +587,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return null;
     }
 
-    public void insertFeedback(String userName, String counselorName, String content, String timestamp) {
+    public void insertFeedback(String userName, String counselorName, String content) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("user_name", userName);
         values.put("counselor_name", counselorName);
         values.put("content", content);
-        values.put("timestamp", timestamp);
+
+        // 获取当前北京时间并插入
+        String beijingTime = getCurrentBeijingTime();  // 获取北京时间
+        values.put("timestamp", beijingTime);  // 将北京时间插入到数据库中
+
         db.insert("feedbacks", null, values);
+        db.close();
     }
+
 
     public List<String> getFeedbacksForCounselor(String counselorName) {
         List<String> list = new ArrayList<>();
@@ -678,6 +698,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
-
+    public String getCurrentBeijingTime() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));  // 设置为北京时间（UTC+8）
+        return sdf.format(new Date());
+    }
 
 }
