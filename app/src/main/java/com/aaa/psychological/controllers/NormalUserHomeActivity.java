@@ -269,7 +269,7 @@ public class NormalUserHomeActivity extends AppCompatActivity {
         //搜索咨询师
         EditText etSearch = findViewById(R.id.etSearch);
         ImageView imgSearch = findViewById(R.id.imgSearchIcon);  // 你已有的图标ID
-
+        //搜索功能
         imgSearch.setOnClickListener(v -> {
             String keyword = etSearch.getText().toString().trim();
             if (!keyword.isEmpty()) {

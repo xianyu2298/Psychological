@@ -30,19 +30,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // 表名
     public static final String TABLE_USERS = "users";
+    private static final String TABLE_FEEDBACK = "feedbacks";
+    private static final String TABLE_APPOINTMENTS = "appointments";
+    public static final String TABLE_MESSAGES = "messages";
 
     // 列名
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_USERNAME = "username";
     public static final String COLUMN_PASSWORD = "password";
     public static final String COLUMN_ROLE = "role"; // 0 = 普通用户，1 = 咨询师
-
     public static final String COLUMN_AVATAR = "avatar";
-
-    private static final String TABLE_APPOINTMENTS = "appointments";
-
-    private static final String TABLE_FEEDBACK = "feedbacks";
-
 
     // 建表语句
     private static final String CREATE_TABLE_USERS =
@@ -74,8 +71,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     "user_name TEXT NOT NULL, " +
                     "counselor_name TEXT NOT NULL, " +
                     "content TEXT NOT NULL, " +
-                    "timestamp TEXT NOT NULL" +
+                    "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP" +
                     ")";
+
+    private static final String CREATE_TABLE_MESSAGES =
+            "CREATE TABLE IF NOT EXISTS " + TABLE_MESSAGES + " (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "sender TEXT NOT NULL, " +
+                    "receiver TEXT NOT NULL, " +
+                    "content TEXT NOT NULL, " +
+                    "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP" +
+                    ");";
 
     public DatabaseHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -87,21 +93,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_USERS);
         db.execSQL(CREATE_TABLE_APPOINTMENTS);
         db.execSQL(CREATE_TABLE_FEEDBACK);
-        db.execSQL("CREATE TABLE IF NOT EXISTS messages (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "sender TEXT NOT NULL, " +
-                "receiver TEXT NOT NULL, " +
-                "content TEXT NOT NULL, " +
-                "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)");
+        db.execSQL(CREATE_TABLE_MESSAGES);
 
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // 如果需要升级，先删除旧表，然后创建新表
-//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
-//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_APPOINTMENTS);
-//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FEEDBACK);
+        // 删除旧表并重新创建新表
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_APPOINTMENTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FEEDBACK);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_MESSAGES);
         onCreate(db);
     }
 
@@ -522,7 +524,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return messages;
     }
 
-
+    //修改咨询师的更多信息
     public void updateCounselorInfo(String username, String expertise, String availableTime) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -562,6 +564,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    //更新咨询师介绍
     public void updateCounselorIntroduction(String username, String intro) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
